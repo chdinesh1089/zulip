@@ -174,3 +174,8 @@ pyahocorasick==1.4.0
 # Needed for function decorators that don't break introspection.
 # Used for rate limiting authentication.
 decorator==4.4.0
+
+# Needed for getting device os and browser
+user-agents==2.0
+PyYAML==5.1.2
+ua-parser==0.8.0

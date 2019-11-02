@@ -13,6 +13,7 @@ from zerver.lib.queue import queue_json_publish
 from zerver.lib.send_email import FromAddress
 from zerver.models import UserProfile
 from zerver.lib.timezone import get_timezone
+from user_agents import parse
 
 JUST_CREATED_THRESHOLD = 60
 
@@ -39,24 +40,8 @@ def get_device_browser(user_agent: str) -> Optional[str]:
 
 
 def get_device_os(user_agent: str) -> Optional[str]:
-    user_agent = user_agent.lower()
-    if "windows" in user_agent:
-        return "Windows"
-    elif "macintosh" in user_agent:
-        return "macOS"
-    elif "linux" in user_agent and "android" not in user_agent:
-        return "Linux"
-    elif "android" in user_agent:
-        return "Android"
-    elif "ios" in user_agent:
-        return "iOS"
-    elif "like mac os x" in user_agent:
-        return "iOS"
-    elif " cros " in user_agent:
-        return "ChromeOS"
-    else:
-        return None
-
+    user_agent_info = parse(user_agent)
+    return user_agent_info.os.family
 
 @receiver(user_logged_in, dispatch_uid="only_on_login")
 def email_on_new_login(sender: Any, user: UserProfile, request: Any, **kwargs: Any) -> None:

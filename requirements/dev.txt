@@ -56,7 +56,7 @@ docker==4.0.2             # via moto
 docutils==0.14            # via botocore, recommonmark, sphinx
 ecdsa==0.13.2             # via python-jose, sshpubkeys
 fakeldap==0.6.1
-# future==0.17.1            # via commonmark, python-jose, python-twitter
+# future==0.18.2            # via commonmark, python-jose, python-twitter
 gitlint==0.12.0
 h2==2.6.2                 # via hyper
 hpack==3.0.0              # via h2
@@ -137,7 +137,7 @@ python-magic==0.4.15
 python-twitter==3.5
 python3-openid==3.1.0     # via social-auth-core
 pytz==2019.1
-pyyaml==5.1.1             # via cfn-lint, moto, yamole
+pyyaml==5.1.2
 qrcode==6.1               # via django-two-factor-auth
 queuelib==1.5.0           # via scrapy
 recommonmark==0.5.0
@@ -175,8 +175,10 @@ twilio==6.29.2
 twisted==19.2.1
 typed-ast==1.4.0          # via mypy
 typing-extensions==3.7.4
+ua-parser==0.8.0
 git+https://github.com/zulip/ultrajson@70ac02bec#egg=ujson==1.35+git
 urllib3==1.25.3           # via botocore, requests, transifex-client
+user-agents==2.0
 virtualenv-clone==0.5.3
 w3lib==1.20.0             # via parsel, scrapy
 wcwidth==0.1.7            # via prompt-toolkit
