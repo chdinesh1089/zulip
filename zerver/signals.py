@@ -13,50 +13,31 @@ from zerver.lib.queue import queue_json_publish
 from zerver.lib.send_email import FromAddress
 from zerver.models import UserProfile
 from zerver.lib.timezone import get_timezone
+from ua_parser import user_agent_parser
 
 JUST_CREATED_THRESHOLD = 60
 
 def get_device_browser(user_agent: str) -> Optional[str]:
-    user_agent = user_agent.lower()
-    if "zulip" in user_agent:
+    device_browser = user_agent_parser.ParseUserAgent(user_agent)['family']
+    if "zulip" in user_agent.lower():
         return "Zulip"
-    elif "edge" in user_agent:
-        return "Edge"
-    elif "opera" in user_agent or "opr/" in user_agent:
-        return "Opera"
-    elif ("chrome" in user_agent or "crios" in user_agent) and "chromium" not in user_agent:
-        return 'Chrome'
-    elif "firefox" in user_agent and "seamonkey" not in user_agent and "chrome" not in user_agent:
-        return "Firefox"
-    elif "chromium" in user_agent:
-        return "Chromium"
-    elif "safari" in user_agent and "chrome" not in user_agent and "chromium" not in user_agent:
-        return "Safari"
-    elif "msie" in user_agent or "trident" in user_agent:
+    elif device_browser == "IE":
         return "Internet Explorer"
+    elif device_browser == "Chrome Mobile iOS":
+        return "Chrome Mobile"
+    elif device_browser != "Other":
+        return device_browser
     else:
         return None
 
 
 def get_device_os(user_agent: str) -> Optional[str]:
+    device_os = user_agent_parser.ParseOS(user_agent)['family']
     user_agent = user_agent.lower()
-    if "windows" in user_agent:
-        return "Windows"
-    elif "macintosh" in user_agent:
-        return "macOS"
-    elif "linux" in user_agent and "android" not in user_agent:
-        return "Linux"
-    elif "android" in user_agent:
-        return "Android"
-    elif "ios" in user_agent:
-        return "iOS"
-    elif "like mac os x" in user_agent:
-        return "iOS"
-    elif " cros " in user_agent:
-        return "ChromeOS"
+    if device_os != "Other":
+        return device_os
     else:
         return None
-
 
 @receiver(user_logged_in, dispatch_uid="only_on_login")
 def email_on_new_login(sender: Any, user: UserProfile, request: Any, **kwargs: Any) -> None:
@@ -74,7 +55,7 @@ def email_on_new_login(sender: Any, user: UserProfile, request: Any, **kwargs: A
         if (timezone_now() - user.date_joined).total_seconds() <= JUST_CREATED_THRESHOLD:
             return
 
-        user_agent = request.META.get('HTTP_USER_AGENT', "").lower()
+        user_agent = request.META.get('HTTP_USER_AGENT', "")
 
         context = common_context(user)
         context['user_email'] = user.delivery_email
