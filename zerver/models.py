@@ -149,7 +149,7 @@ class Realm(models.Model):
     # See RealmDomain for the domains that apply for a given organization.
     emails_restricted_to_domains: bool = models.BooleanField(default=False)
 
-    invite_required: bool = models.BooleanField(default=True)
+    default_invite_required: bool = models.BooleanField(default=True)
     invite_by_admins_only: bool = models.BooleanField(default=False)
     _max_invites: Optional[int] = models.IntegerField(null=True, db_column='max_invites')
     disallow_disposable_email_addresses: bool = models.BooleanField(default=True)
@@ -353,7 +353,7 @@ class Realm(models.Model):
         zoom_user_id=str,
         zoom_api_key=str,
         zoom_api_secret=str,
-        invite_required=bool,
+        default_invite_required=bool,
         invite_by_admins_only=bool,
         inline_image_preview=bool,
         inline_url_embed_preview=bool,

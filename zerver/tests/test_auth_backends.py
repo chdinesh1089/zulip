@@ -1195,7 +1195,7 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
         name = 'Full Name'
         subdomain = 'zulip'
         realm = get_realm("zulip")
-        realm.invite_required = True
+        realm.default_invite_required = True
         realm.save()
 
         stream_names = ["new_stream_1", "new_stream_2"]
@@ -2374,7 +2374,7 @@ class GoogleAuthBackendTest(SocialAuthBase):
         }
 
         realm = get_realm("zulip")
-        realm.invite_required = True
+        realm.default_invite_required = True
         realm.save()
 
         stream_names = ["new_stream_1", "new_stream_2"]
