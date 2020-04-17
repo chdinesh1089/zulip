@@ -252,8 +252,6 @@ function set_message_retention_setting_dropdown() {
 function set_org_join_restrictions_dropdown() {
     const value = get_property_value("realm_org_join_restrictions");
     $("#id_realm_org_join_restrictions").val(value);
-    change_element_block_display_property('allowed_domains_label',
-                                          value === 'only_selected_domain');
 }
 
 function set_message_content_in_email_notifications_visiblity() {
@@ -279,7 +277,7 @@ exports.populate_realm_domains = function (realm_domains) {
     if (domains.length === 0) {
         domains = i18n.t("None");
     }
-    $("#allowed_domains_label").text(i18n.t("Allowed domains: __domains__", {domains: domains}));
+    $("#configured_domains_label").text(i18n.t("Allowed/Configured domains: __domains__", {domains: domains}));
 
     const realm_domains_table_body = $("#realm_domains_table tbody").expectOne();
     realm_domains_table_body.find("tr").remove();
@@ -904,9 +902,11 @@ exports.build_page = function () {
         const widget = $("#add-realm-domain-widget");
         const domain = widget.find(".new-realm-domain").val();
         const allow_subdomains = widget.find(".new-realm-domain-allow-subdomains").prop("checked");
+        const invite_required = widget.find(".new-realm-domain-invite-required").prop("checked");
         const data = {
             domain: JSON.stringify(domain),
             allow_subdomains: JSON.stringify(allow_subdomains),
+            invite_required: JSON.stringify(invite_required),
         };
 
         channel.post({
@@ -915,6 +915,7 @@ exports.build_page = function () {
             success: function () {
                 $("#add-realm-domain-widget .new-realm-domain").val("");
                 $("#add-realm-domain-widget .new-realm-domain-allow-subdomains").prop("checked", false);
+                $("#add-realm-domain-widget .new-realm-domain-invite-required").prop("checked", false);
                 ui_report.success(i18n.t("Added successfully!"), realm_domains_info);
                 fade_status_element(realm_domains_info);
             },
@@ -930,9 +931,11 @@ exports.build_page = function () {
         const realm_domains_info = $(".realm_domains_info");
         const domain = $(this).parents("tr").find(".domain").text();
         const allow_subdomains = $(this).prop('checked');
+        const invite_required = $(this).parents("tr").find(".invite-required").prop('checked');
         const url = '/json/realm/domains/' + domain;
         const data = {
             allow_subdomains: JSON.stringify(allow_subdomains),
+            invite_required: JSON.stringify(invite_required),
         };
 
         channel.patch({
@@ -953,6 +956,63 @@ exports.build_page = function () {
                 fade_status_element(realm_domains_info);
             },
         });
+    });
+
+    $("#realm_domains_table").on("change", ".invite-required", function (e) {
+        e.stopPropagation();
+        const realm_domains_info = $(".realm_domains_info");
+        const domain = $(this).parents("tr").find(".domain").text();
+        const allow_subdomains = $(this).parents("tr").find(".allow-subdomains").prop('checked');
+        const invite_required = $(this).prop('checked');
+        const url = '/json/realm/domains/' + domain;
+        const data = {
+            allow_subdomains: JSON.stringify(allow_subdomains),
+            invite_required: JSON.stringify(invite_required),
+        };
+
+        channel.patch({
+            url: url,
+            data: data,
+            success: function () {
+                if (invite_required) {
+                    ui_report.success(i18n.t("Update successful: Invitations required for __domain__",
+                                             {domain: domain}), realm_domains_info);
+                } else {
+                    ui_report.success(i18n.t("Update successful: Invitations not required for __domain__",
+                                             {domain: domain}), realm_domains_info);
+                }
+                fade_status_element(realm_domains_info);
+            },
+            error: function (xhr) {
+                ui_report.error(i18n.t("Failed"), xhr, realm_domains_info);
+                fade_status_element(realm_domains_info);
+            },
+        });
+    });
+
+    function notification_stream_update(stream_id, notification_type) {
+        exports.render_notifications_stream_ui(stream_id, notification_type);
+        save_discard_widget_status_handler($('#org-notifications'));
+    }
+
+    exports.default_code_language_widget.register_event_handlers(
+        save_discard_widget_status_handler);
+
+    $(".notifications-stream-setting .dropdown-list-body").on("click keypress", ".stream_name", function (e) {
+        const notifications_stream_setting_elem = $(this).closest(".notifications-stream-setting");
+        if (e.type === "keypress") {
+            if (e.which === 13) {
+                notifications_stream_setting_elem.find(".dropdown-menu").dropdown("toggle");
+            } else {
+                return;
+            }
+        }
+        const stream_id = parseInt($(this).attr('data-stream-id'), 10);
+        notification_stream_update(stream_id, notifications_stream_setting_elem.data("notifications-type"));
+    });
+
+    $(".notification-disable").click(function (e) {
+        notification_stream_update(-1, e.target.id.replace("_stream_disable", ""));
     });
 
     function upload_realm_icon(file_input) {
