@@ -2,7 +2,7 @@ const common = require('../puppeteer_lib/common');
 const assert = require("assert");
 
 const email = 'alice@test.example.com';
-const subdomain = 'testsubdomain';
+const subdomain = 'testsubdomain-' + Math.floor(Math.random() * 1000);
 const organization_name = 'Awesome Organization';
 const host = "zulipdev.com:9981";
 
