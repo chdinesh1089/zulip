@@ -24,19 +24,12 @@ usage = """test-js-with-puppeteer [options]
     test-js-with-puppeteer 09-navigation.js # Run a single test file
     test-js-with-puppeteer 09 # Run a single test file 09-navigation.js
     test-js-with-puppeteer 01-login.js 03-narrow.js # Run a few test files
-    test-js-with-puppeteer 01 03 # Run a few test files, 01-login.js and 03-narrow.js here
-    
-    Using loops:
-        test-js-with-capser --loop 5 # run test 5 times 
-"""
+    test-js-with-puppeteer 01 03 # Run a few test files, 01-login.js and 03-narrow.js here"""
 parser = argparse.ArgumentParser(usage)
 
 parser.add_argument('--interactive', dest='interactive',
                     action="store_true",
                     default=False, help='Run tests interactively')
-parser.add_argument('--loop', dest='loop',
-                    action="store", type=int,
-                    default=None, help='Run tests in a loop.')
 parser.add_argument('--force', dest='force',
                     action="store_true",
                     default=False, help='Run tests despite possible problems.')
@@ -74,24 +67,8 @@ def run_tests(files: Iterable[str], external_host: str) -> None:
     with test_server_running(False, external_host):
         # Important: do this next call inside the `with` block, when Django
         #            will be pointing at the test database.
-        ret = 0
         subprocess.check_call('tools/setup/generate-test-credentials')
-        if options.loop:
-            for i in range(1, options.loop):
-                print("Loop count: " + str(i))
-                run_ret = run_tests()
-                if run_ret != 0:
-                    os.rename(
-                        'var/puppeteer/failure-0.png',
-                        'var/puppeteer/failure-' + str(i) + '.png')
-                    os.rename(
-                        'var/puppeteer/after-form-1.png',
-                        'var/puppeteer/after-form-' + str(i) + '.png')
-                    os.rename(
-                        'var/puppeteer/before-form-0.png',
-                        'var/puppeteer/before-form-' + str(i) + '.png')
-                    ret = 1
-        elif options.interactive:
+        if options.interactive:
             response = input('Press Enter to run tests, "q" to quit: ')
             ret = 1
             while response != 'q':
@@ -102,16 +79,12 @@ def run_tests(files: Iterable[str], external_host: str) -> None:
             ret = 1
             ret = run_tests()
     if ret != 0:
-        print("""
-The Puppeteer frontend tests failed! For any help feel free to ask in czo""", file=sys.stderr)
-        if os.environ.get("CIRCLECI"):
-            print("", file=sys.stderr)
-            print("In CircleCI, the Artifacts tab contains screenshots of the failure.", file=sys.stderr)
-            print("", file=sys.stderr)
         sys.exit(ret)
 
 external_host = "zulipdev.com:9981"
 assert_provisioning_status_ok(options.force)
 prepare_puppeteer_run()
-run_tests(options.tests, external_host)
+for i in range(0,100):
+    print("testrun:", i)
+    run_tests(options.tests, external_host)
 sys.exit(0)

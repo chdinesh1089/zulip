@@ -34,8 +34,8 @@ async function realm_creation_tests() {
 
     // fill the form.
     await page.type('#id_team_name', organization_name);
-    await page.type('#id_full_name', 'Alice');
     await page.type('#id_team_subdomain', subdomain);
+    await page.type('#id_full_name', 'Alice');
     await page.type('#id_password', 'passwordwhichisnotreallycomplex');
     await page.click('#id_terms');
     await page.$eval('#registration', form => form.submit());
