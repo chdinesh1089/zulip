@@ -8,7 +8,10 @@ async function log_in(page, credentials) {
     assert.equal(realm_url + 'login/', page.url());
     await page.type('#id_username', credentials.username);
     await page.type('#id_password', credentials.password);
-    await page.$eval('#login_form', form => form.submit());
+    await Promise.all([
+        page.waitForNavigation(),
+        page.$eval('#login_form', form => form.submit()),
+    ]);
 }
 
 async function log_out(page) {
@@ -18,12 +21,29 @@ async function log_out(page) {
     await page.waitForSelector(menu_selector, {visible: true});
     await page.click(menu_selector);
     await page.waitForSelector(logout_selector);
+
+    let afterWaitForNavigation = false;
+    page.on('request', (request) => {
+        console.log(
+            `[${request.method().toUpperCase()}] (after waitNavigation: ${afterWaitForNavigation})`,
+            request.url()
+        );
+        request.continue();
+    });
+
+    await page.setRequestInterception(true);
     await page.click(logout_selector);
-    assert(page.url().includes('accounts/login/'));
+    await page.waitForSelector('input[name="username"]'); // wait for email input on login page
+    afterWaitForNavigation = true;
+
+    // We don't check for /accounts/login/ here because there have been
+    // rare flakes where we are getting redirected to just /login/.
+    console.log('Page url (after logout):', page.url());
+    assert(page.url().includes('/login/'));
 }
 
-async function login_tests() {
-    const page = await common.get_page(realm_url + 'login/');
+async function login_tests(page) {
+    await page.goto(realm_url + 'login/');
     await log_in(page, test_credentials.default_user);
     await log_out(page);
 }

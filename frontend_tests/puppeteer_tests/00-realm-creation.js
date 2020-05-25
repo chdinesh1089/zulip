@@ -2,17 +2,20 @@ const common = require('../puppeteer_lib/common');
 const assert = require("assert");
 
 const email = 'alice@test.example.com';
-const subdomain = 'testsubdomain-' + Math.floor(Math.random() * 1000);
+const subdomain = 'testsubdomain';
 const organization_name = 'Awesome Organization';
 const host = "zulipdev.com:9981";
 
-async function realm_creation_tests() {
-    const page = await common.get_page('http://' + host + '/new/');
+async function realm_creation_tests(page) {
+    await page.goto('http://' + host + '/new/');
 
     // submit the email for realm creation.
     await page.waitForSelector('#email');
     await page.type('#email', email);
-    await page.$eval('#send_confirm', form => form.submit());
+    await Promise.all([
+        page.waitForNavigation(),
+        page.$eval('#send_confirm', form => form.submit()),
+    ]);
 
     // Make sure onfirmation email is sent.
     assert(page.url().includes('/accounts/new/send_confirm/' + email));
@@ -33,12 +36,22 @@ async function realm_creation_tests() {
     assert(text_in_pitch === "We just need you to do one last thing.");
 
     // fill the form.
-    await page.type('#id_team_name', organization_name);
-    await page.type('#id_team_subdomain', subdomain);
-    await page.type('#id_full_name', 'Alice');
-    await page.type('#id_password', 'passwordwhichisnotreallycomplex');
+    const type_options = { delay: 1 };
+    await page.type('#id_team_name', organization_name, type_options);
+    await page.$eval('#realm_in_root_domain', (el) => {
+        if (el.checked == true) {
+            el.click();
+        }
+    });
+
+    await page.type('#id_team_subdomain', subdomain, type_options);
+    await page.type('#id_full_name', 'Alice', type_options);
+    await page.type('#id_password', 'passwordwhichisnotreallycomplex', type_options);
     await page.click('#id_terms');
-    await page.$eval('#registration', form => form.submit());
+    await Promise.all([
+        page.waitForNavigation(),
+        page.$eval('#registration', form => form.submit()),
+    ]);
 
     // Check if realm is created and user is logged in by checking if
     // element of id `lightbox_overlay` exists.
