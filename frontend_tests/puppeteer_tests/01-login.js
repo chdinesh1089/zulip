@@ -19,7 +19,8 @@ async function log_out(page) {
     await page.click(menu_selector);
     await page.waitForSelector(logout_selector);
     await page.click(logout_selector);
-    await page.waitForResponse(response => response.url().includes('accounts/login/'))
+    await page.waitForSelector('input[name="username"]'); // wait for email input on login page
+    assert(page.url().includes('/login/'));
 }
 
 async function login_tests(page) {
