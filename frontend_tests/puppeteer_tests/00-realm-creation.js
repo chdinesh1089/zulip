@@ -2,7 +2,7 @@ const common = require('../puppeteer_lib/common');
 const assert = require("assert");
 
 const email = 'alice@test.example.com';
-const subdomain = 'testsubdomain-' + Math.floor(Math.random() * 1000);
+const subdomain = 'testsubdomain';
 const organization_name = 'Awesome Organization';
 const host = "zulipdev.com:9981";
 
@@ -24,7 +24,7 @@ async function realm_creation_tests(page) {
     const page_content = await page.evaluate(() => document.querySelector('body').innerText);
     const confirmation_key = await JSON.parse(page_content).confirmation_key;
     const confirmation_url = 'http://' + host + '/accounts/do_confirm/' + confirmation_key;
-    await page.goto(confirmation_url);
+    await page.goto(confirmation_url,{waitUntil: 'domcontentloaded'});
 
     // Make sure the realm creation page is loaded correctly by
     // checking the text in <p> tag under pitch class is as expected.
@@ -38,7 +38,10 @@ async function realm_creation_tests(page) {
     await page.type('#id_team_subdomain', subdomain, {delay:1});
     await page.type('#id_password', 'passwordwhichisnotreallycomplex', {delay:1});
     await page.click('#id_terms');
-    await page.$eval('#registration', form => form.submit());
+    await Promise.all([
+        page.waitForNavigation({waitUntil:"domcontentloaded"}),
+        page.$eval('#registration', form => form.submit()),
+    ]);
 
     // Check if realm is created and user is logged in by checking if
     // element of id `lightbox_overlay` exists.
