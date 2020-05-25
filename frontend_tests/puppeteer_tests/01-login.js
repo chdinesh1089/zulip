@@ -19,7 +19,7 @@ async function log_out(page) {
     await page.click(menu_selector);
     await page.waitForSelector(logout_selector);
     await page.click(logout_selector);
-    assert(page.url().includes('login/'));
+    await page.waitForResponse(response => response.url().includes('accounts/login/'))
 }
 
 async function login_tests(page) {
