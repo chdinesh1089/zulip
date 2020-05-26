@@ -24,7 +24,8 @@ async function realm_creation_tests(page) {
     const page_content = await page.evaluate(() => document.querySelector('body').innerText);
     const confirmation_key = await JSON.parse(page_content).confirmation_key;
     const confirmation_url = 'http://' + host + '/accounts/do_confirm/' + confirmation_key;
-    await page.goto(confirmation_url,{waitUntil: 'load'});
+    await page.goto(confirmation_url);
+    page.waitForNavigation({ waitUntil: 'load' });
 
     // Make sure the realm creation page is loaded correctly by
     // checking the text in <p> tag under pitch class is as expected.
@@ -39,9 +40,9 @@ async function realm_creation_tests(page) {
     });
 
     // fill the form.
-    await page.type('#id_team_name', organization_name, {delay:1});
-    page.on('console', msg => console.log('LOG:', msg.text());
+    page.on('console', msg => console.log('LOG:', msg.text()));
     await page.type('#id_full_name', 'Alice', {delay:1});
+    await page.type('#id_team_name', organization_name, {delay:1});
     await page.type('#id_team_subdomain', subdomain, {delay:1});
     await page.type('#id_password', 'passwordwhichisnotreallycomplex', {delay:1});
     await page.click('#id_terms');
