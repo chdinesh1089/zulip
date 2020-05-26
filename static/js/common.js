@@ -7,6 +7,7 @@ exports.status_classes = 'alert-error alert-success alert-info alert-warning';
 
 exports.autofocus = function (selector) {
     $(function () {
+        console.log("HAHA")
         $(selector).focus();
     });
 };
