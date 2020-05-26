@@ -24,7 +24,7 @@ async function realm_creation_tests(page) {
     const page_content = await page.evaluate(() => document.querySelector('body').innerText);
     const confirmation_key = await JSON.parse(page_content).confirmation_key;
     const confirmation_url = 'http://' + host + '/accounts/do_confirm/' + confirmation_key;
-    await page.goto(confirmation_url,{waitUntil: 'domcontentloaded'});
+    await page.goto(confirmation_url,{waitUntil: 'load'});
 
     // Make sure the realm creation page is loaded correctly by
     // checking the text in <p> tag under pitch class is as expected.
@@ -45,7 +45,7 @@ async function realm_creation_tests(page) {
     await page.type('#id_password', 'passwordwhichisnotreallycomplex', {delay:1});
     await page.click('#id_terms');
     await Promise.all([
-        page.waitForNavigation({waitUntil:"domcontentloaded"}),
+        page.waitForNavigation({waitUntil:"load"}),
         page.$eval('#registration', form => form.submit()),
     ]);
 
