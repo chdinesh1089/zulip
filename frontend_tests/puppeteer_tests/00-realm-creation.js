@@ -32,6 +32,12 @@ async function realm_creation_tests(page) {
     const text_in_pitch = await page.evaluate(() => document.querySelector('.pitch p').innerText);
     assert(text_in_pitch === "We just need you to do one last thing.");
 
+    await page.$eval('#realm_in_root_domain', (el) => {
+        if (el.checked == true) {
+            el.click();
+        }
+    });
+
     // fill the form.
     await page.type('#id_team_name', organization_name, {delay:1});
     await page.type('#id_full_name', 'Alice', {delay:1});
