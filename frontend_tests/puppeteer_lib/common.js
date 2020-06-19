@@ -8,6 +8,19 @@ class CommonUtils {
         this.browser = null;
         this.screenshot_id = 0;
         this.realm_url = "http://zulip.zulipdev.com:9981/";
+        this.pm_recipient = {
+            set: async function (page, recipient) {
+                await page.type("#private_message_recipient", recipient);
+                await page.keyboard.press("Enter");
+            },
+
+            expect: async function (page, expected) {
+                const actual_recipients = await page.evaluate(() => {
+                    return compose_state.private_message_recipient();
+                });
+                assert.equal(actual_recipients, expected);
+            },
+        };
     }
 
     async ensure_browser() {
@@ -83,6 +96,28 @@ class CommonUtils {
                 await page.type(name_selector, params[name]);
             }
         }
+    }
+
+    async check_form_contents(page, form_selector, params) {
+        for (const name of Object.keys(params)) {
+            const name_selector = `${form_selector} [name="${name}"]`;
+            const expected_value = params[name];
+            if (typeof expected_value === "boolean") {
+                assert.equal(await page.$eval(name_selector, (el) => {
+                    return el.checked;
+                }), expected_value, 'Form content is not as expedcted.');
+            } else {
+                assert.equal(await page.$eval(name_selector, (el) => {
+                    return el.value;
+                }), expected_value, 'Form content is not as expedcted.');
+            }
+        }
+    }
+
+    async get_user_id(page, email) {
+        return await page.evaluate((email) => {
+            return people.get_user_id(email);
+        }, email);
     }
 
     async log_in(page, credentials = null) {
@@ -232,6 +267,8 @@ class CommonUtils {
         await page.evaluate(() => {
             compose_actions.cancel();
         });
+        // Make sure if compose box is closed.
+        await page.waitForSelector('#compose-textarea', {hidden: true});
     }
 
     async send_multiple_messages(page, msgs) {
