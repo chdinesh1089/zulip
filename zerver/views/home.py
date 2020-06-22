@@ -4,6 +4,7 @@ import time
 from typing import Any, Dict, List, Optional, Tuple
 
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -12,7 +13,7 @@ from django.utils.cache import patch_cache_control
 from two_factor.utils import default_device
 
 from zerver.decorator import zulip_login_required
-from zerver.forms import ToSForm
+from zerver.forms import ToSForm, generate_password_reset_url
 from zerver.lib.actions import do_change_tos_version, realm_user_count
 from zerver.lib.events import do_events_register
 from zerver.lib.i18n import (
@@ -186,6 +187,13 @@ def home_real(request: HttpRequest) -> HttpResponse:
     # If a user hasn't signed the current Terms of Service, send them there
     if need_accept_tos(user_profile):
         return accounts_accept_terms(request)
+
+    # If a user has a weak password, we set this value in session to `True`
+    # with the code in `authenticate` of EmailAuthBackend. Here, we redirect them
+    # to password reset form stating that the user's password is too weak.
+    if request.session.get('needs_to_change_password', False):
+        return HttpResponseRedirect(generate_password_reset_url(user_profile,
+                                    default_token_generator).replace('password', 'weak_password'))
 
     narrow, narrow_stream, narrow_topic = detect_narrowed_window(request, user_profile)
 

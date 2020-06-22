@@ -16,6 +16,9 @@
             {% if validlink %}
             <form method="post" id="password_reset" class="form-horizontal" autocomplete="off">
                 {{ csrf_input }}
+                {% if weak_password %}
+                <p class="weak_password">Your current password is too weak for this organization's password security policy.</p>
+                {% endif %}
                 <div class="input-box" id="email-section">
                     <label for="id_email">{{ _("Email") }}</label>
                     <div>

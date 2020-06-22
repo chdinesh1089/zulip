@@ -311,6 +311,17 @@ class AuthBackendTest(ZulipTestCase):
                                                               password=password,
                                                               realm=get_realm("zulip")))
 
+    def test_email_auth_backend_no_session(self) -> None:
+        user_profile = self.example_user('hamlet')
+        password = "testpassword"
+        user_profile.set_password(password)
+        user_profile.save()
+
+        with self.assertRaises(JsonableError) as m:
+            EmailAuthBackend().authenticate(username=self.example_email('hamlet'),
+                                            password=password, realm=get_realm("zulip"))
+        self.assertEqual(str(m.exception), 'You need to reset your password.')
+
     def test_login_preview(self) -> None:
         # Test preview=true displays organization login page
         # instead of redirecting to app

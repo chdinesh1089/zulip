@@ -573,6 +573,33 @@ class LoginTest(ZulipTestCase):
 
         remove_ratelimit_rule(10, 2, domain='authenticate_by_username')
 
+    def test_email_auth_weak_password(self) -> None:
+        user_profile = self.example_user('hamlet')
+        weak_password = "weak_password_of_25_chars"
+        strong_password = "a_very_strong_password_of_34_chars"
+        user_profile.set_password(weak_password)
+        user_profile.save()
+        with self.settings(PASSWORD_MIN_LENGTH=30):
+
+            # First check if user is taken to reset page.
+            result = self.login_with_return(user_profile.delivery_email, weak_password)
+            self.assertEqual(result.status_code, 302)
+            result = self.client_get(result.url)
+            self.assertEqual(result.status_code, 302)
+            self.assertTrue((result.url).startswith('http://zulip.testserver/accounts/weak_password/reset'))
+            result = self.client_get(result.url)
+            self.assertEqual(result.url, '/accounts/weak_password/reset/MTA/set-password/')
+            result = self.client_get(result.url)
+            self.assert_in_success_response(["Your current password is too weak for this organization's password security policy."],
+                                            result)
+
+            # Now change password and verify user isn't redirected to reset page.
+            self.client_post('/accounts/weak_password/reset/MTA/set-password/',
+                             {'name': user_profile.email, 'new_password1': strong_password, 'new_password2': strong_password})
+            result = self.login_with_return(user_profile.delivery_email, strong_password)
+            result = self.client_get(result.url)
+            self.assertNotEqual(result.status_code, 302)
+
     def test_login_nonexist_user(self) -> None:
         result = self.login_with_return("xxx@zulip.com", "xxx")
         self.assertEqual(result.status_code, 200)

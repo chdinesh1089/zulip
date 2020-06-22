@@ -352,7 +352,10 @@ class EmailAuthBackend(ZulipAuthMixin):
         if user_profile is None:
             return None
         if user_profile.check_password(password):
-            return user_profile
+            if hasattr(request, 'session'):
+                request.session['needs_to_change_password'] = not check_password_strength(password)
+                return user_profile
+            raise JsonableError(_('You need to reset your password.'))
         return None
 
 def is_valid_email(email: str) -> bool:
