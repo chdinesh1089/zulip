@@ -1192,6 +1192,10 @@ input.new-organization-button {
         margin: 0;
     }
 
+    .weak_password {
+        margin-bottom: 20px;
+    }
+
     #email-section .fakecontrol {
         display: inline-block;
         margin: 0;

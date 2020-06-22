@@ -363,6 +363,8 @@ class EmailAuthBackend(ZulipAuthMixin):
         if user_profile is None:
             return None
         if user_profile.check_password(password):
+            if not check_password_strength(password):
+                request.session['needs_to_change_password'] = True
             return user_profile
         return None
 

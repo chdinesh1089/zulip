@@ -225,10 +225,11 @@ class LoggingSetPasswordForm(SetPasswordForm):
         return self.user
 
 def generate_password_reset_url(user_profile: UserProfile,
-                                token_generator: PasswordResetTokenGenerator) -> str:
+                                token_generator: PasswordResetTokenGenerator,
+                                url_name: str="password_reset_confirm") -> str:
     token = token_generator.make_token(user_profile)
     uid = urlsafe_base64_encode(force_bytes(user_profile.id))
-    endpoint = reverse('password_reset_confirm',
+    endpoint = reverse(url_name,
                        kwargs=dict(uidb64=uid, token=token))
     return f"{user_profile.realm.uri}{endpoint}"
 
