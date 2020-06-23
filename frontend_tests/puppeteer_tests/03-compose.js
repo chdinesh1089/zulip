@@ -30,15 +30,16 @@ async function compose_tests(page) {
     await common.send_multiple_messages(page, [
         { stream: 'Verona',
           topic: 'Reply test',
-          content: "We reply to this message",
+          content: "Compose stream reply test",
         },
         { recipient: "cordelia@zulip.com",
-          content: "And reply to this private message",
+          content: "Compose private message reply test",
         },
     ]);
 
     assert.equal(await page.evaluate(() => $('#zhome .message_row').length), initial_msgs_count + 2);
 
+    // Test whether keyboard shortcuts works correctly
     await page.keyboard.press("KeyC");
     await page.waitForSelector('#stream-message', {visible: true});
     await check_compose_form_empty(page);
@@ -50,9 +51,9 @@ async function compose_tests(page) {
     await close_compose_box(page);
 
     // Check that when you reply to a message it pre-populates the stream and topic fields
-    const message_we_reply_to = get_last_element(await page.$x(get_message_xpath('We reply to this message')));
+    const stream_message = get_last_element(await page.$x(get_message_xpath('Compose stream reply test')));
     // we chose only the last element make sure we don't click on any duplicates.
-    await message_we_reply_to.click();
+    await stream_message.click();
     await common.check_form_contents(page, '#send_message_form', {
         stream_message_recipient_stream: 'Verona',
         stream_message_recipient_topic: 'Reply test',
@@ -61,8 +62,8 @@ async function compose_tests(page) {
     await close_compose_box(page);
 
     // Check the same for a private message.
-    const priv_msg_we_reply_to = get_last_element(await page.$x(get_message_xpath('And reply to this private message')));
-    await priv_msg_we_reply_to.click();
+    const private_message = get_last_element(await page.$x(get_message_xpath('Compose private message reply test')));
+    await private_message.click();
     await page.waitForSelector("#private_message_recipient", {visible: true});
     await common.pm_recipient.expect(page, await common.get_internal_email_from_name(page, 'cordelia'));
 
