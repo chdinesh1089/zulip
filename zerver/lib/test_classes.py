@@ -388,8 +388,11 @@ class ZulipTestCase(TestCase):
                        email: str,
                        password: str) -> None:
         realm = get_realm("zulip")
+        request = HttpRequest()
+        request.session = self.client.session
         self.assertTrue(
             self.client.login(
+                request=request,
                 username=email,
                 password=password,
                 realm=realm,
@@ -412,7 +415,9 @@ class ZulipTestCase(TestCase):
         email = user_profile.delivery_email
         realm = user_profile.realm
         password = initial_password(email)
-        self.assertTrue(self.client.login(username=email, password=password,
+        request = HttpRequest()
+        request.session = self.client.session
+        self.assertTrue(self.client.login(request=request, username=email, password=password,
                                           realm=realm))
 
     def login_2fa(self, user_profile: UserProfile) -> None:
