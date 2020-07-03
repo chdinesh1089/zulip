@@ -78,6 +78,7 @@ from zerver.models import (
     DisposableEmailError,
     DomainNotAllowedForRealmError,
     EmailContainsPlusError,
+    PasswordTooWeakError,
     PreregistrationUser,
     Realm,
     UserProfile,
@@ -362,7 +363,15 @@ class EmailAuthBackend(ZulipAuthMixin):
         user_profile = common_get_active_user(username, realm, return_data=return_data)
         if user_profile is None:
             return None
-        if user_profile.check_password(password):
+
+        try:
+            is_password_correct = user_profile.check_password(password)
+        except PasswordTooWeakError:
+            # In some rare cases when password hasher is changed and the user has
+            # a weak password, PasswordTooWeakError will be raised.
+            raise JsonableError(_('You need to reset your password.'))
+
+        if is_password_correct:
             if not check_password_strength(password):
                 request.session['needs_to_change_password'] = True
             return user_profile
