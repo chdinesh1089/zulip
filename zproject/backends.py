@@ -340,7 +340,7 @@ class EmailAuthBackend(ZulipAuthMixin):
     name = 'email'
 
     @rate_limit_auth
-    def authenticate(self, request: Optional[HttpRequest]=None, *,
+    def authenticate(self, request: HttpRequest, *,
                      username: str, password: str,
                      realm: Realm,
                      return_data: Optional[Dict[str, Any]]=None) -> Optional[UserProfile]:
