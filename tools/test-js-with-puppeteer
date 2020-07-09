@@ -24,7 +24,11 @@ usage = """test-js-with-puppeteer [options]
     test-js-with-puppeteer 09-navigation.js # Run a single test file
     test-js-with-puppeteer 09 # Run a single test file 09-navigation.js
     test-js-with-puppeteer 01-login.js 03-narrow.js # Run a few test files
-    test-js-with-puppeteer 01 03 # Run a few test files, 01-login.js and 03-narrow.js here"""
+    test-js-with-puppeteer 01 03 # Run a few test files, 01-login.js and 03-narrow.js here
+    test-js-with-puppeteer --loop 10 # Run tests in a loop for ten times.
+    test-js-with-puppeteer --loop 10 09-navigation # Run only navigation test for 10 times.
+    """
+
 parser = argparse.ArgumentParser(usage)
 
 parser.add_argument('--interactive', dest='interactive',
@@ -33,12 +37,17 @@ parser.add_argument('--interactive', dest='interactive',
 parser.add_argument('--force', dest='force',
                     action="store_true",
                     default=False, help='Run tests despite possible problems.')
+parser.add_argument('--loop', dest='loop', nargs=1,
+                    action='store',type=int, default=None,
+                    help='Run tests in a loop for the specified number of times')
 parser.add_argument('tests', nargs=argparse.REMAINDER,
                     help='Specific tests to run; by default, runs all tests')
 
 options = parser.parse_args()
 
 sys.path.insert(0, ZULIP_PATH)
+
+from scripts.lib.zulip_tools import run as run_in_shell
 
 # check for the venv
 from tools.lib import sanity_check
@@ -72,11 +81,34 @@ def run_tests(files: Iterable[str], external_host: str) -> None:
             current_test_num += 1
         return 0, -1
 
+    def run_loop(count: int) -> int:
+        ret = 1
+        for trial in range(1, count + 1):
+            print(f'\nSTARTING LOOP {trial} / {count}\n')
+            ret = run_tests()[0]
+            if ret == 0:
+                print(f'\n#{trial} FAILED!\n')
+                return 0
+            print(f'\n#{trial} SUCCESS!\n')
+            # We reset the database to avoid any changes done in the database
+            # by previous test loop in interfering with the next loop.
+            run_in_shell(['tools/rebuild-test-database'])
+        return 1
+
     with test_server_running(False, external_host):
         # Important: do this next call inside the `with` block, when Django
         #            will be pointing at the test database.
         subprocess.check_call('tools/setup/generate-test-credentials')
-        if options.interactive:
+
+        if options.loop:
+            loop_count = options.loop[0]
+            print('\n\nWe will use loop mode for these tests:\n')
+            for test_file in test_files:
+                print('    ' + os.path.basename(test_file))
+            print(f'\nNumber of loops: {loop_count}\n')
+            ret = run_loop(loop_count)
+
+        elif options.interactive:
             response = input('Press Enter to run tests, "q" to quit: ')
             ret = 1
             failed_test_num = 0
