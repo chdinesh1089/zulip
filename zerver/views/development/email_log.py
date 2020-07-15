@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_safe
 
 from confirmation.models import Confirmation, confirmation_url
-from zerver.lib.actions import do_change_user_delivery_email, do_send_realm_reactivation_email
+from zerver.lib.actions import do_send_realm_reactivation_email
 from zerver.lib.email_notifications import enqueue_welcome_emails
 from zerver.lib.response import json_success
 from zerver.models import Realm, get_realm, get_realm_stream, get_user_by_delivery_email
@@ -112,10 +112,7 @@ def generate_all_emails(request: HttpRequest) -> HttpResponse:
     url = confirmation_url(key, realm, Confirmation.EMAIL_CHANGE)
     user_profile = get_user_by_delivery_email(registered_email, realm)
     result = client.get(url)
-    assert result.status_code == 200
-
-    # Reset the email value so we can run this again
-    do_change_user_delivery_email(user_profile, registered_email)
+    assert result.status_code == 302
 
     # Follow up day1 day2 emails for normal user
     enqueue_welcome_emails(user_profile)

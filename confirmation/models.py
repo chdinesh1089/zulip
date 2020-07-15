@@ -123,7 +123,7 @@ _properties = {
     Confirmation.USER_REGISTRATION: ConfirmationType('check_prereg_key_and_redirect'),
     Confirmation.INVITATION: ConfirmationType('check_prereg_key_and_redirect',
                                               validity_in_days=settings.INVITATION_LINK_VALIDITY_DAYS),
-    Confirmation.EMAIL_CHANGE: ConfirmationType('zerver.views.user_settings.confirm_email_change'),
+    Confirmation.EMAIL_CHANGE: ConfirmationType('zerver.views.user_settings.start_email_change'),
     Confirmation.UNSUBSCRIBE: ConfirmationType('zerver.views.unsubscribe.email_unsubscribe',
                                                validity_in_days=1000000),  # should never expire
     Confirmation.MULTIUSE_INVITE: ConfirmationType(

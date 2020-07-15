@@ -58,7 +58,7 @@ from zerver.lib.mobile_auth_otp import otp_decrypt_api_key
 from zerver.lib.rate_limiter import add_ratelimit_rule, remove_ratelimit_rule
 from zerver.lib.request import JsonableError
 from zerver.lib.storage import static_path
-from zerver.lib.test_classes import ZulipTestCase
+from zerver.lib.test_classes import EmailChangeTestMixin, ZulipTestCase
 from zerver.lib.test_helpers import (
     create_s3_buckets,
     get_test_image_file,
@@ -697,7 +697,7 @@ class DesktopFlowTestingLib(ZulipTestCase):
         ciphertext = data[12:]
         return AESGCM(key).decrypt(iv, ciphertext, b"").decode()
 
-class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
+class SocialAuthBase(EmailChangeTestMixin, DesktopFlowTestingLib, ZulipTestCase):
     """This is a base class for testing social-auth backends. These
     methods are often overridden by subclasses:
 
@@ -744,6 +744,7 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
         desktop_flow_otp: Optional[str]=None,
         is_signup: bool=False,
         next: str='',
+        action_key: str='',
         multiuse_object_key: str='',
         alternative_start_url: Optional[str]=None,
         *,
@@ -769,6 +770,7 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
         if is_signup:
             url = self.SIGNUP_URL
         params['next'] = next
+        params['action_key'] = action_key
         params['multiuse_object_key'] = multiuse_object_key
         if len(params) > 0:
             url += f"?{urllib.parse.urlencode(params)}"
@@ -800,6 +802,7 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
                          desktop_flow_otp: Optional[str]=None,
                          is_signup: bool=False,
                          next: str='',
+                         action_key: str='',
                          multiuse_object_key: str='',
                          expect_choose_email_screen: bool=False,
                          alternative_start_url: Optional[str]=None,
@@ -833,7 +836,7 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
 
         url, headers = self.prepare_login_url_and_headers(
             subdomain, mobile_flow_otp, desktop_flow_otp, is_signup, next,
-            multiuse_object_key, alternative_start_url,
+            action_key, multiuse_object_key, alternative_start_url,
             user_agent=user_agent,
         )
 
@@ -1472,6 +1475,31 @@ class SocialAuthBase(DesktopFlowTestingLib, ZulipTestCase):
         created_user = get_user_by_delivery_email(email, realm)
         self.assertEqual(created_user.role, UserProfile.ROLE_MEMBER)
 
+    def do_email_change(self, user_profile: UserProfile, action_key: str,
+                        different_account: bool=False) -> HttpResponse:
+        if different_account:
+            assert user_profile != self.example_user('cordelia')
+            user_profile = self.example_user('cordelia')
+
+        email = user_profile.delivery_email
+        name = user_profile.full_name
+
+        account_data_dict = self.get_account_data_dict(email=email,
+                                                       name=name)
+
+        result = self.social_auth_test(account_data_dict, subdomain='zulip',
+                                       action_key=action_key)
+
+        self.assertEqual(result.status_code, 302)
+        data = load_subdomain_token(result)
+        self.assertEqual(data['email'], email)
+        self.assertEqual(data['full_name'], name)
+        self.assertEqual(data['subdomain'], 'zulip')
+        self.assertEqual(data['action_key'], action_key)
+
+        result = self.client_get(result.url)
+        return result
+
 class SAMLAuthBackendTest(SocialAuthBase):
     __unittest_skip__ = False
 
@@ -1490,6 +1518,7 @@ class SAMLAuthBackendTest(SocialAuthBase):
                          desktop_flow_otp: Optional[str]=None,
                          is_signup: bool=False,
                          next: str='',
+                         action_key: str='',
                          multiuse_object_key: str='',
                          user_agent: Optional[str]=None,
                          extra_attributes: Mapping[str, List[str]]={},
@@ -1500,6 +1529,7 @@ class SAMLAuthBackendTest(SocialAuthBase):
             desktop_flow_otp,
             is_signup,
             next,
+            action_key,
             multiuse_object_key,
             user_agent=user_agent,
         )
@@ -1529,6 +1559,8 @@ class SAMLAuthBackendTest(SocialAuthBase):
         assert data is not None
         if next:
             self.assertEqual(data['next'], next)
+        if action_key:
+            self.assertEqual(data['action_key'], action_key)
         if is_signup:
             self.assertEqual(data['is_signup'], '1')
 
@@ -2212,6 +2244,7 @@ class AppleAuthBackendNativeFlowTest(AppleAuthMixin, SocialAuthBase):
         desktop_flow_otp: Optional[str]=None,
         is_signup: bool=False,
         next: str='',
+        action_key: str='',
         multiuse_object_key: str='',
         alternative_start_url: Optional[str]=None,
         id_token: Optional[str]=None,
@@ -2219,7 +2252,7 @@ class AppleAuthBackendNativeFlowTest(AppleAuthMixin, SocialAuthBase):
         user_agent: Optional[str]=None,
     ) -> Tuple[str, Dict[str, Any]]:
         url, headers = super().prepare_login_url_and_headers(
-            subdomain, mobile_flow_otp, desktop_flow_otp, is_signup, next,
+            subdomain, mobile_flow_otp, desktop_flow_otp, is_signup, next, action_key,
             multiuse_object_key, alternative_start_url=alternative_start_url,
             user_agent=user_agent,
         )
@@ -2244,6 +2277,7 @@ class AppleAuthBackendNativeFlowTest(AppleAuthMixin, SocialAuthBase):
                          desktop_flow_otp: Optional[str]=None,
                          is_signup: bool=False,
                          next: str='',
+                         action_key: str='',
                          multiuse_object_key: str='',
                          alternative_start_url: Optional[str]=None,
                          skip_id_token: bool=False,
@@ -2267,7 +2301,7 @@ class AppleAuthBackendNativeFlowTest(AppleAuthMixin, SocialAuthBase):
             id_token = None
 
         url, headers = self.prepare_login_url_and_headers(
-            subdomain, mobile_flow_otp, desktop_flow_otp, is_signup, next,
+            subdomain, mobile_flow_otp, desktop_flow_otp, is_signup, next, action_key,
             multiuse_object_key, alternative_start_url=self.AUTH_FINISH_URL,
             user_agent=user_agent, id_token=id_token,
         )
@@ -2819,6 +2853,30 @@ class GitHubAuthBackendTest(SocialAuthBase):
             "Social auth ({}) failed because user has no verified emails associated with the account".format("GitHub"),
             "warning",
         )])
+
+    def test_social_auth_email_change_unregistered_user_login(self) -> None:
+        # Overriden as user is taken to choose email screen and
+        # it needs to be handled by send `expect_choose_email_screen`
+        # to `social_auth_test`.
+        user_profile = self.example_user('hamlet')
+        new_email = 'hamlet-new@zulip.com'
+        old_email = user_profile.delivery_email
+        account_data_dict = self.get_account_data_dict(email='new-email@zulip.com',
+                                                       name='New King')
+        action_key = self.create_email_change_confirmation_key(user_profile, new_email)
+
+        result = self.social_auth_test(account_data_dict, subdomain='zulip',
+                                       action_key=action_key,
+                                       expect_choose_email_screen=True)
+
+        result = self.client_get(result.url)
+        self.assertEqual(result.status_code, 400)
+        self.assert_in_response("Incorrect login. Login with your old email to change your email address",
+                                result)
+
+        with self.assertRaises(UserProfile.DoesNotExist):
+            get_user_by_delivery_email(new_email, user_profile.realm)
+        get_user_by_delivery_email(old_email, user_profile.realm)
 
 class GitLabAuthBackendTest(SocialAuthBase):
     __unittest_skip__ = False

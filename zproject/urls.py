@@ -512,8 +512,8 @@ i18n_urls = [
             name='check_prereg_key_and_redirect'),
 
     re_path(r'^accounts/confirm_new_email/(?P<confirmation_key>[\w]+)$',
-            zerver.views.user_settings.confirm_email_change,
-            name='zerver.views.user_settings.confirm_email_change'),
+            zerver.views.user_settings.start_email_change,
+            name='zerver.views.user_settings.start_email_change'),
 
     # Email unsubscription endpoint. Allows for unsubscribing from various types of emails,
     # including the welcome emails (day 1 & 2), missed PMs, etc.

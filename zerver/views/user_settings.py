@@ -4,7 +4,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from confirmation.models import (
@@ -13,7 +14,7 @@ from confirmation.models import (
     get_object_from_key,
     render_confirmation_key_error,
 )
-from zerver.decorator import REQ, has_request_variables, human_users_only
+from zerver.decorator import REQ, do_login, has_request_variables, human_users_only
 from zerver.lib.actions import (
     check_change_full_name,
     do_change_avatar_fields,
@@ -40,20 +41,32 @@ from zerver.lib.send_email import FromAddress, send_email
 from zerver.lib.timezone import get_all_timezones
 from zerver.lib.upload import upload_avatar_image
 from zerver.lib.validator import check_bool, check_int, check_int_in, check_string, check_string_in
-from zerver.models import UserProfile, avatar_changes_disabled, name_changes_disabled
+from zerver.models import (
+    EmailChangeStatus,
+    UserProfile,
+    avatar_changes_disabled,
+    name_changes_disabled,
+)
 from zproject.backends import check_password_strength, email_belongs_to_ldap
 
 AVATAR_CHANGES_DISABLED_ERROR = _("Avatar changes are disabled in this organization.")
 
-def confirm_email_change(request: HttpRequest, confirmation_key: str) -> HttpResponse:
+def start_email_change(request: HttpRequest, confirmation_key: str) -> HttpResponse:
     try:
-        email_change_object = get_object_from_key(confirmation_key, Confirmation.EMAIL_CHANGE)
+        get_object_from_key(confirmation_key, Confirmation.EMAIL_CHANGE)
     except ConfirmationKeyException as exception:
         return render_confirmation_key_error(request, exception)
 
+    return redirect(f'{reverse("django.contrib.auth.views.login")}?action_key={confirmation_key}')
+
+def confirm_email_change(request: HttpRequest, email_change_object: EmailChangeStatus,
+                         acting_user: UserProfile) -> HttpResponse:
     new_email = email_change_object.new_email
     old_email = email_change_object.old_email
     user_profile = email_change_object.user_profile
+
+    if acting_user != user_profile:
+        raise JsonableError(_("Incorrect login. Login with your old email to change your email address"))
 
     if user_profile.realm.email_changes_disabled and not user_profile.is_realm_admin:
         raise JsonableError(_("Email address changes are disabled in this organization."))
