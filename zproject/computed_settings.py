@@ -1030,7 +1030,7 @@ if REGISTER_LINK_DISABLED is None:
 ########################################################################
 
 SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['subdomain', 'is_signup', 'mobile_flow_otp', 'desktop_flow_otp',
-                                        'multiuse_object_key']
+                                        'multiuse_object_key', 'action_key']
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login/'
 
 # CLIENT is required by PSA's internal implementation. We name it
