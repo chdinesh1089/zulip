@@ -371,6 +371,7 @@ def remote_user_sso(
     request: HttpRequest,
     mobile_flow_otp: Optional[str] = REQ(default=None),
     desktop_flow_otp: Optional[str] = REQ(default=None),
+    action_key: str = REQ(default=''),
     next: str = REQ(default="/"),
 ) -> HttpResponse:
     subdomain = get_subdomain(request)
@@ -408,6 +409,7 @@ def remote_user_sso(
         email=email,
         mobile_flow_otp=mobile_flow_otp,
         desktop_flow_otp=desktop_flow_otp,
+        action_key=action_key,
         redirect_to=next,
     )
     if realm:
