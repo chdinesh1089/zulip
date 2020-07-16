@@ -3686,7 +3686,21 @@ class TestDevAuthBackend(ZulipTestCase):
         response = self.client_post('/accounts/login/local/', data)
         self.assertRedirects(response, reverse('config_error', kwargs={'error_category_name': 'dev'}))
 
-class TestZulipRemoteUserBackend(DesktopFlowTestingLib, ZulipTestCase):
+class TestZulipRemoteUserBackend(EmailChangeTestMixin, DesktopFlowTestingLib, ZulipTestCase):
+    __unittest_skip__ = False
+
+    def do_email_change(self, user_profile: UserProfile, action_key: str,
+                        different_account: bool=False) -> HttpResponse:
+        if different_account:
+            user_profile = self.example_user('cordelia')
+
+        email = user_profile.delivery_email
+        with self.settings(AUTHENTICATION_BACKENDS=('zproject.backends.ZulipRemoteUserBackend',)):
+            result = self.client_get('/accounts/login/sso/',
+                                     dict(action_key=action_key), REMOTE_USER=email)
+
+        return result
+
     def test_start_remote_user_sso(self) -> None:
         result = self.client_get('/accounts/login/start/sso/?param1=value1&params=value2')
         self.assertEqual(result.status_code, 302)
