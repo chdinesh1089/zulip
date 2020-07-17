@@ -3,14 +3,14 @@ Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_conf
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_id_token_with_invalid_aud_sent
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_no_id_token_sent
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_complete
-2020-07-17 06:02:22.874 INFO [zulip.auth.apple] AuthFailed: Authentication failed: 
-2020-07-17 06:02:22.898 INFO [zulip.auth.apple] HTTPError: 
+2020-07-17 06:16:37.279 INFO [zulip.auth.apple] AuthFailed: Authentication failed: 
+2020-07-17 06:16:37.327 INFO [zulip.auth.apple] HTTPError: 
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_complete_when_base_exc_is_raised
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_deactivated_user
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_desktop_registration
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_desktop_success
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_invalid_email
-2020-07-17 06:02:23.212 WARN [zulip.auth.apple] Apple got invalid email argument.
+2020-07-17 06:16:38.233 WARN [zulip.auth.apple] Apple got invalid email argument.
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -24,12 +24,14 @@ Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_soci
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_registration_without_is_signup
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_registration_without_is_signup_closed_realm
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_session_fields_cleared_correctly
+2020-07-17 06:16:40.532 INFO [] /complete/apple/: Authentication failed: Token validation failed
+2020-07-17 06:16:40.547 INFO [] /complete/apple/: Authentication failed: Token validation failed
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:24.596 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:24.601 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:16:40.711 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:40.719 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:24.910 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:41.277 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.AppleAuthBackendNativeFlowTest.test_when_social_auth_subdomain_is_not_set
@@ -39,14 +41,14 @@ Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_config_error
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_config_error_production
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_id_token_verification_failure
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_complete
-2020-07-17 06:02:25.491 INFO [zulip.auth.apple] AuthFailed: Authentication failed: 
-2020-07-17 06:02:25.495 INFO [zulip.auth.apple] HTTPError: 
+2020-07-17 06:16:42.175 INFO [zulip.auth.apple] AuthFailed: Authentication failed: 
+2020-07-17 06:16:42.184 INFO [zulip.auth.apple] HTTPError: 
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_complete_when_base_exc_is_raised
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_deactivated_user
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_desktop_registration
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_desktop_success
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_invalid_email
-2020-07-17 06:02:25.846 WARN [zulip.auth.apple] Apple got invalid email argument.
+2020-07-17 06:16:42.845 WARN [zulip.auth.apple] Apple got invalid email argument.
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -62,10 +64,10 @@ Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_session_fields_cleared_correctly
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:27.259 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:27.263 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:16:45.477 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:45.486 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:27.592 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:46.106 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.AppleIdAuthBackendTest.test_validate_state
@@ -83,10 +85,10 @@ Running zerver.tests.test_auth_backends.AuthBackendTest.test_remote_user_backend
 Running zerver.tests.test_auth_backends.AuthBackendTest.test_remote_user_backend_invalid_realm
 Running zerver.tests.test_auth_backends.AuthBackendTest.test_remote_user_backend_sso_append_domain
 Running zerver.tests.test_auth_backends.AuthBackendTest.test_social_auth_backends
-2020-07-17 06:02:28.896 INFO [zulip.auth.google] Failed login attempt for deactivated account: 10@zulip
-2020-07-17 06:02:28.990 INFO [zulip.auth.google] Failed login attempt for deactivated account: 10@zulip
-2020-07-17 06:02:29.091 INFO [zulip.auth.github] Failed login attempt for deactivated account: 10@zulip
-2020-07-17 06:02:29.192 INFO [zulip.auth.github] Failed login attempt for deactivated account: 10@zulip
+2020-07-17 06:16:48.942 INFO [zulip.auth.google] Failed login attempt for deactivated account: 10@zulip
+2020-07-17 06:16:49.033 INFO [zulip.auth.google] Failed login attempt for deactivated account: 10@zulip
+2020-07-17 06:16:49.126 INFO [zulip.auth.github] Failed login attempt for deactivated account: 10@zulip
+2020-07-17 06:16:49.223 INFO [zulip.auth.github] Failed login attempt for deactivated account: 10@zulip
 Running zerver.tests.test_auth_backends.CheckPasswordStrengthTest.test_check_password_strength
 Running zerver.tests.test_auth_backends.DevFetchAPIKeyTest.test_deactivated_realm
 Running zerver.tests.test_auth_backends.DevFetchAPIKeyTest.test_dev_auth_disabled
@@ -128,8 +130,8 @@ Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_github_oauth2
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_github_oauth2_success_single_email
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_github_unverified_email_with_existing_account
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_complete
-2020-07-17 06:02:30.934 INFO [zulip.auth.github] AuthFailed: Authentication failed: 
-2020-07-17 06:02:30.938 INFO [zulip.auth.github] HTTPError: 
+2020-07-17 06:16:50.841 INFO [zulip.auth.github] AuthFailed: Authentication failed: 
+2020-07-17 06:16:50.845 INFO [zulip.auth.github] HTTPError: 
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_complete_when_base_exc_is_raised
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_deactivated_user
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_desktop_registration
@@ -140,7 +142,7 @@ Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_g
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_github_team_member_success
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_github_team_not_member_failed
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_invalid_email
-2020-07-17 06:02:31.591 WARN [zulip.auth.github] GitHub got invalid email argument.
+2020-07-17 06:16:51.444 WARN [zulip.auth.github] GitHub got invalid email argument.
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -156,10 +158,10 @@ Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_r
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_session_fields_cleared_correctly
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:33.532 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:33.552 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:16:53.155 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:53.176 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:33.935 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:53.533 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.GitHubAuthBackendTest.test_when_social_auth_subdomain_is_not_set
@@ -167,14 +169,14 @@ Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_config_error_
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_config_error_production
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_gitlab_auth_enabled
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_complete
-2020-07-17 06:02:34.259 INFO [zulip.auth.gitlab] AuthFailed: Authentication failed: 
-2020-07-17 06:02:34.262 INFO [zulip.auth.gitlab] HTTPError: 
+2020-07-17 06:16:53.830 INFO [zulip.auth.gitlab] AuthFailed: Authentication failed: 
+2020-07-17 06:16:53.834 INFO [zulip.auth.gitlab] HTTPError: 
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_complete_when_base_exc_is_raised
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_deactivated_user
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_desktop_registration
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_desktop_success
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_invalid_email
-2020-07-17 06:02:34.661 WARN [zulip.auth.gitlab] GitLab got invalid email argument.
+2020-07-17 06:16:54.229 WARN [zulip.auth.gitlab] GitLab got invalid email argument.
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -190,10 +192,10 @@ Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_r
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_session_fields_cleared_correctly
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:36.291 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:36.313 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:16:55.733 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:55.754 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:36.637 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:56.068 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.GitLabAuthBackendTest.test_when_social_auth_subdomain_is_not_set
@@ -209,15 +211,15 @@ Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_log_into_subd
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_prevent_duplicate_signups
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_redirect_to_next_url_for_log_into_subdomain
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_complete
-2020-07-17 06:02:37.395 INFO [zulip.auth.google] AuthFailed: Authentication failed: 
-2020-07-17 06:02:37.399 INFO [zulip.auth.google] HTTPError: 
+2020-07-17 06:16:56.847 INFO [zulip.auth.google] AuthFailed: Authentication failed: 
+2020-07-17 06:16:56.851 INFO [zulip.auth.google] HTTPError: 
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_complete_when_base_exc_is_raised
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_deactivated_user
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_desktop_registration
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_desktop_success
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_email_not_verified
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_invalid_email
-2020-07-17 06:02:37.764 WARN [zulip.auth.google] Google got invalid email argument.
+2020-07-17 06:16:57.219 WARN [zulip.auth.google] Google got invalid email argument.
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -235,10 +237,10 @@ Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_r
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_session_fields_cleared_correctly
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:39.415 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:39.437 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:16:58.771 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:58.795 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:39.773 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:16:59.116 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.GoogleAuthBackendTest.test_when_social_auth_subdomain_is_not_set
@@ -246,13 +248,14 @@ Running zerver.tests.test_auth_backends.JSONFetchAPIKeyTest.test_not_loggedin
 Running zerver.tests.test_auth_backends.JSONFetchAPIKeyTest.test_success
 Running zerver.tests.test_auth_backends.JSONFetchAPIKeyTest.test_wrong_password
 Running zerver.tests.test_auth_backends.LDAPBackendTest.test_non_existing_realm
-2020-07-17 06:02:40.122 WARN [django_auth_ldap] ('Realm is None', 1) while authenticating hamlet
+2020-07-17 06:16:59.389 WARN [django_auth_ldap] ('Realm is None', 1) while authenticating hamlet
 Running zerver.tests.test_auth_backends.RateLimitAuthenticationTests.test_email_and_ldap_backends_user_based_rate_limiting
 Running zerver.tests.test_auth_backends.RateLimitAuthenticationTests.test_email_auth_backend_user_based_rate_limiting
 Running zerver.tests.test_auth_backends.RateLimitAuthenticationTests.test_ldap_backend_user_based_rate_limiting
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_choose_subdomain_invalid_subdomain_specified
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_config_error_development
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_config_error_page
+2020-07-17 06:16:59.635 INFO [] Attempted to initiate SAML authentication with wrong idp argument: None
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_config_error_production
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_idp_initiated_signin_subdomain_implicit
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_idp_initiated_signin_subdomain_implicit_invalid
@@ -270,7 +273,7 @@ Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_dea
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_desktop_registration
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_desktop_success
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_invalid_email
-2020-07-17 06:02:41.237 WARN [zulip.auth.saml] SAML got invalid email argument.
+2020-07-17 06:17:00.358 WARN [zulip.auth.saml] SAML got invalid email argument.
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_invalid_realm
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_invited_as_admin_but_expired
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_mobile_and_desktop_flow_in_one_request_error
@@ -290,15 +293,19 @@ Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_sam
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_saml_idp_org_membership_root_subdomain
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_saml_idp_org_membership_success
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_saml_login_bad_idp_arg
+2020-07-17 06:17:02.071 INFO [] Attempted to initiate SAML authentication with wrong idp argument: None
+2020-07-17 06:17:02.074 INFO [] Attempted to initiate SAML authentication with wrong idp argument: nonexistent_idp
+2020-07-17 06:17:02.088 INFO [] Attempted to initiate SAML authentication with wrong idp argument: None
+2020-07-17 06:17:02.091 INFO [] Attempted to initiate SAML authentication with wrong idp argument: nonexistent_idp
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_saml_multiple_idps_configured
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_saml_require_limit_to_subdomains
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_session_fields_cleared_correctly
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_success
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_with_ldap_auth_registration_from_confirmation
-2020-07-17 06:02:43.046 WARN [] New account email alice@zulip.com could not be found in LDAP
-2020-07-17 06:02:43.051 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
+2020-07-17 06:17:02.367 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:17:02.372 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: alice@zulip.com. Input username: alice@zulip.com
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_social_auth_with_ldap_populate_registration_from_confirmation
-2020-07-17 06:02:43.582 WARN [] New account email alice@zulip.com could not be found in LDAP
+2020-07-17 06:17:02.723 WARN [] New account email alice@zulip.com could not be found in LDAP
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_user_cannot_log_into_nonexisting_realm
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_user_cannot_log_into_wrong_subdomain
 Running zerver.tests.test_auth_backends.SAMLAuthBackendTest.test_when_social_auth_subdomain_is_not_set
@@ -391,10 +398,10 @@ Running zerver.tests.test_auth_backends.TestLDAP.test_get_or_build_user_when_use
 Running zerver.tests.test_auth_backends.TestLDAP.test_ldap_permissions
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_failure_due_to_deactivated_user
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_failure_due_to_nonexistent_user
-2020-07-17 06:02:44.823 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: nonexistent. Input username: nonexistent@zulip.com
+2020-07-17 06:17:04.024 DEBG [zulip.ldap] ZulipLDAPAuthBackend: No ldap user matching django_to_ldap_username result: nonexistent. Input username: nonexistent@zulip.com
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_failure_due_to_wrong_password
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_failure_when_domain_does_not_match
-2020-07-17 06:02:44.874 DEBG [zulip.ldap] ZulipLDAPAuthBackend: Email hamlet@zulip.com does not match LDAP domain acme.com.
+2020-07-17 06:17:04.065 DEBG [zulip.ldap] ZulipLDAPAuthBackend: Email hamlet@zulip.com does not match LDAP domain acme.com.
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_success
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_success_when_user_does_not_exist_with_split_full_name_mapping
 Running zerver.tests.test_auth_backends.TestLDAP.test_login_success_when_user_does_not_exist_with_valid_subdomain
@@ -417,27 +424,31 @@ Running zerver.tests.test_auth_backends.TestRequireEmailFormatUsernames.test_req
 Running zerver.tests.test_auth_backends.TestRequireEmailFormatUsernames.test_require_email_format_usernames_for_ldap_with_email_attr
 Running zerver.tests.test_auth_backends.TestTwoFactor.test_direct_dev_login_with_2fa
 Running zerver.tests.test_auth_backends.TestTwoFactor.test_two_factor_login_with_ldap
+2020-07-17 06:17:04.939 INFO [two_factor.gateways.fake] Fake SMS to +12125550100: "Your token is: 123456"
 Running zerver.tests.test_auth_backends.TestZulipAuthMixin.test_get_user
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_authenticate
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_deactivate_non_matching_users
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_deactivate_user
+2020-07-17 06:17:05.158 INFO [] Deactivating user hamlet@zulip.com because they are disabled in LDAP.
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_dont_sync_disabled_ldap_user
+2020-07-17 06:17:05.215 INFO [] Deactivating user hamlet@zulip.com because they are disabled in LDAP.
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_ldaperror_doesnt_deactivate_user
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_populate_user_returns_none
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_reactivate_user
+2020-07-17 06:17:05.536 INFO [] Reactivating user hamlet@zulip.com because they are not disabled in LDAP.
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_same_full_name
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_too_short_name
-2020-07-17 06:02:46.185 WARN [django_auth_ldap] Name too short! while authenticating hamlet
+2020-07-17 06:17:05.605 WARN [django_auth_ldap] Name too short! while authenticating hamlet
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_custom_profile_field
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_custom_profile_field_invalid_data
-2020-07-17 06:02:46.253 WARN [django_auth_ldap] Invalid data for birthday field: Birthday is not a date while authenticating hamlet
+2020-07-17 06:17:05.673 WARN [django_auth_ldap] Invalid data for birthday field: Birthday is not a date while authenticating hamlet
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_custom_profile_field_no_mapping
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_custom_profile_field_no_update
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_custom_profile_field_not_present_in_ldap
-2020-07-17 06:02:46.374 WARN [django_auth_ldap] uid=hamlet,ou=users,dc=zulip,dc=com does not have a value for the attribute nonExistantAttr
+2020-07-17 06:17:05.780 WARN [django_auth_ldap] uid=hamlet,ou=users,dc=zulip,dc=com does not have a value for the attribute nonExistantAttr
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_full_name
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_non_existent_profile_field
-2020-07-17 06:02:46.465 WARN [django_auth_ldap] Custom profile field with name non_existent not found. while authenticating hamlet
+2020-07-17 06:17:05.845 WARN [django_auth_ldap] Custom profile field with name non_existent not found. while authenticating hamlet
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_split_full_name
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_user_avatar
 Running zerver.tests.test_auth_backends.TestZulipLDAPUserPopulator.test_update_user_avatar_for_s3
