@@ -85,6 +85,7 @@ def confirm_email_change(request: HttpRequest, email_change_object: EmailChangeS
         'new_email': new_email,
         'old_email': old_email,
     }
+    do_login(request, acting_user)
     return render(request, 'confirmation/confirm_email_change.html', context=ctx)
 
 @human_users_only
