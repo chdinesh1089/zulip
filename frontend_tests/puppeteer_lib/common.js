@@ -32,8 +32,17 @@ class CommonUtils {
 
     async ensure_browser() {
         if (this.browser === null) {
+            const window_size = {
+                width: 1400,
+                height: 1024,
+            };
+
             this.browser = await puppeteer.launch({
-                args: ["--window-size=1400,1024", "--no-sandbox", "--disable-setuid-sandbox"],
+                args: [
+                    `--window-size=${window_size.width},${window_size.height}`,
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                ],
                 defaultViewport: {width: 1280, height: 1024},
                 headless: true,
             });
