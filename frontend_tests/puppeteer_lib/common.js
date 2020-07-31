@@ -2,8 +2,12 @@ const assert = require("assert").strict;
 const path = require("path");
 
 const puppeteer = require("puppeteer");
+const recorder = require("./record-tests");
 
 const test_credentials = require("../../var/casper/test_credentials.js").test_credentials;
+
+const root_dir = path.resolve(__dirname, "../../");
+const puppeteer_dir = path.join(root_dir, "var/puppeteer");
 
 class CommonUtils {
     constructor() {
@@ -23,6 +27,16 @@ class CommonUtils {
                 assert.equal(actual_recipients, expected);
             },
         };
+
+        this.window_size = {
+            // width: 1400,
+            // height: 1024,
+
+            // TODO: Remove this and uncomment the above values
+            width: 1400,
+            height: 1024,
+        };
+
         this.fullname = {
             cordelia: "Cordelia Lear",
             othello: "Othello, the Moor of Venice",
@@ -32,19 +46,17 @@ class CommonUtils {
 
     async ensure_browser() {
         if (this.browser === null) {
-            const window_size = {
-                width: 1400,
-                height: 1024,
-            };
+            const { window_size } = this;
 
             this.browser = await puppeteer.launch({
                 args: [
-                    `--window-size=${window_size.width},${window_size.height}`,
+                    // `--window-size=${window_size.width},${window_size.height}`,
                     "--no-sandbox",
                     "--disable-setuid-sandbox",
+                    ...recorder.launchArgsOptions,
                 ],
                 defaultViewport: {width: 1280, height: 1024},
-                headless: true,
+                headless: false,
             });
         }
     }
@@ -66,8 +78,7 @@ class CommonUtils {
             this.screenshot_id += 1;
         }
 
-        const root_dir = path.resolve(__dirname, "../../");
-        const screenshot_path = path.join(root_dir, "var/puppeteer", `${name}.png`);
+        const screenshot_path = path.join(puppeteer_dir, `${name}.png`);
         await page.screenshot({
             path: screenshot_path,
         });
@@ -382,14 +393,29 @@ class CommonUtils {
         // Pass a page instance to test so we can take
         // a screenshot of it when the test fails.
         const page = await this.get_page();
+        page.on('console', msg => console.log(msg.text()))
+        await recorder.start(page);
+        await page.goto();
         try {
             await test_function(page);
+            console.log('Tests ran!');
+            // await recorder.stop(page);
+            await recorder.stop(page, {
+                filename: 'failure.webm',
+                saveDirectory: puppeteer_dir,
+            });
+            console.log('Recording stopped.');
         } catch (e) {
             console.log(e);
 
             // Take a screenshot, and increment the screenshot_id.
             await this.screenshot(page, `failure-${this.screenshot_id}`);
             this.screenshot_id += 1;
+
+            await recorder.stop(page, {
+                filename: 'failure.webm',
+                saveDirectory: puppeteer_dir,
+            });
 
             await this.browser.close();
             process.exit(1);

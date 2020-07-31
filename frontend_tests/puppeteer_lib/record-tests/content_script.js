@@ -5,6 +5,7 @@ if (!window[recorderInjectedProp]) {
     const port = chrome.runtime.connect(chrome.runtime.id);
     port.onMessage.addListener((msg) => window.postMessage(msg, "*"));
     window.addEventListener("message", (event) => {
+        console.log(JSON.stringify(event.data));
         // Relay client messages
         if (event.source === window && event.data.type) {
             port.postMessage(event.data);
@@ -29,6 +30,7 @@ if (!window[recorderInjectedProp]) {
         // The document.title set there must be in sync with
         // --auto-select-desktop-capture-source=PuppeteerRecording
         // we pass to puppeteer.lauch arg options.
+        console.log('Starting the record...');
         const oldTitle = document.title;
         document.title = "PuppeteerRecording";
         window.postMessage({type: "REC_CLIENT_PLAY", data: {oldTitle}}, "*");
