@@ -76,25 +76,28 @@ def run_tests(files: Iterable[str], external_host: str) -> None:
         # Important: do this next call inside the `with` block, when Django
         #            will be pointing at the test database.
         subprocess.check_call('tools/setup/generate-test-credentials')
-        if options.interactive:
-            response = input('Press Enter to run tests, "q" to quit: ')
-            ret = 1
-            failed_test_num = 0
-            while response != 'q' and failed_test_num != -1:
-                ret, failed_test_num = run_tests(failed_test_num)
-                if ret != 0:
-                    response = input('Tests failed. Press Enter to re-run tests, "q" to quit: ')
-        else:
-            ret = 1
-            ret = run_tests()[0]
-    if ret != 0:
-        print("""
-The Puppeteer frontend tests failed! Please report and ask for help in chat.zulip.org""", file=sys.stderr)
-        if os.environ.get("CIRCLECI"):
-            print("", file=sys.stderr)
-            print("In CircleCI, the Artifacts tab contains screenshots of the failure.", file=sys.stderr)
-            print("", file=sys.stderr)
-        sys.exit(ret)
+        print('Test server running...')
+        while True:
+            pass
+        # if options.interactive:
+        #     response = input('Press Enter to run tests, "q" to quit: ')
+        #     ret = 1
+        #     failed_test_num = 0
+        #     while response != 'q' and failed_test_num != -1:
+        #         ret, failed_test_num = run_tests(failed_test_num)
+        #         if ret != 0:
+        #             response = input('Tests failed. Press Enter to re-run tests, "q" to quit: ')
+        # else:
+        #     ret = 1
+        #     ret = run_tests()[0]
+#     if ret != 0:
+#         print("""
+# The Puppeteer frontend tests failed! Please report and ask for help in chat.zulip.org""", file=sys.stderr)
+#         if os.environ.get("CIRCLECI"):
+#             print("", file=sys.stderr)
+#             print("In CircleCI, the Artifacts tab contains screenshots of the failure.", file=sys.stderr)
+#             print("", file=sys.stderr)
+#         sys.exit(ret)
 
 external_host = "zulipdev.com:9981"
 assert_provisioning_status_ok(options.force)
