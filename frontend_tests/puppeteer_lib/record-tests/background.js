@@ -40,6 +40,10 @@ function startRecording(port, oldTitle) {
         };
 
         recorder.onstop = function (event) {
+            if (filename === null || filename === undefined) {
+              return;
+            }
+
             const buffer = new Blob(vedioChunks, {
                 type: "video/webm",
             });
