@@ -20,6 +20,7 @@ if (!window[recorderInjectedProp]) {
         }
 
         if (event.data.oldTitle) {
+            document.querySelector('html').classList.add('__recorder_started__');
             if (document.title === "PuppeteerRecording") {
                 document.title = event.data.oldTitle;
             }

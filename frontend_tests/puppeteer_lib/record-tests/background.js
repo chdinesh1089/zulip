@@ -41,10 +41,9 @@ function startRecording(port, oldTitle) {
 
         recorder.onstop = function (event) {
             if (filename === null || filename === undefined) {
-              return;
+                return;
             }
 
-            port.sendMessage({ debug: true, onstop_called: true }};
             const buffer = new Blob(vedioChunks, {
                 type: "video/webm",
             });
@@ -54,7 +53,6 @@ function startRecording(port, oldTitle) {
                 url,
                 filename,
             });
-            port.sendMessage({ debug: true, download_started: true }};
         };
 
         recorder.start();
