@@ -82,13 +82,18 @@ chrome.runtime.onConnect.addListener((port) => {
     });
 
     // Wait until download completes...
+    let downloadFilename = null;
     chrome.downloads.onChanged.addListener((delta) => {
+        if (delta.filename !== undefined) {
+            downloadFilename = delta.filename.current;           
+        }
+ 
         if (!delta.state || delta.state.current !== "complete") {
             return;
         }
 
         try {
-            port.postMessage({downloadComplete: true});
+            port.postMessage({downloadComplete: true, downloadFilename});
         } catch (e) {
             console.error(e);
         }

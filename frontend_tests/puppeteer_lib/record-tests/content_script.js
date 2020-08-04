@@ -16,7 +16,9 @@ if (!window[recorderInjectedProp]) {
         }
 
         if (event.data.downloadComplete) {
-            document.querySelector("html").classList.add("__download_complete__");
+            const $html = document.querySelector("html");
+            $html.classList.add("__download_complete__");
+            $html.dataset.puppeteerRecordingFilename = event.data.downloadFilename;
         }
 
         if (event.data.oldTitle) {
