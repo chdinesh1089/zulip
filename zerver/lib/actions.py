@@ -1004,12 +1004,17 @@ def do_change_user_delivery_email(user_profile: UserProfile, new_email: str) -> 
                                  modified_user=user_profile, event_type=RealmAuditLog.USER_EMAIL_CHANGED,
                                  event_time=event_time)
 
-def do_start_email_change_process(user_profile: UserProfile, new_email: str) -> None:
+def create_email_change_confirmation_link(user_profile: UserProfile, new_email: str) -> str:
     old_email = user_profile.delivery_email
     obj = EmailChangeStatus.objects.create(new_email=new_email, old_email=old_email,
                                            user_profile=user_profile, realm=user_profile.realm)
 
-    activation_url = create_confirmation_link(obj, Confirmation.EMAIL_CHANGE)
+    return create_confirmation_link(obj, Confirmation.EMAIL_CHANGE)
+
+def do_start_email_change_process(user_profile: UserProfile, new_email: str) -> None:
+    old_email = user_profile.delivery_email
+    activation_url = create_email_change_confirmation_link(user_profile, new_email)
+
     from zerver.context_processors import common_context
     context = common_context(user_profile)
     context.update({
