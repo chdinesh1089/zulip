@@ -95,6 +95,7 @@ class CommonUtils {
         // the extension won't have a chance to run, and to start the
         // recording when screenCapture.startRecording is called.
         await page.goto(this.realm_url);
+	page.on('console', msg=> console.log("LOG:", msg.text()));
         await screenCapture.startRecording(page);
 
         return page;
@@ -139,7 +140,8 @@ class CommonUtils {
         }
         for (const name of Object.keys(params)) {
             const name_selector = `${form_selector} [name="${name}"]`;
-            await this.screenshot(page, `filling-${name}`);
+ //           await this.screenshot(page, `filling-${name}`);
+	    console.log(`filling FORM with ${name}`);
             const value = params[name];
             if (typeof value === "boolean") {
                 await page.$eval(name_selector, (el, value) => {
@@ -157,6 +159,7 @@ class CommonUtils {
                 await page.type(name_selector, params[name]);
             }
 
+			    console.log(`filled FORM with ${name}`);
             await this.screenshot(page, `filled-${name}`);
         }
     }

@@ -60,6 +60,7 @@ $(() => {
             // Find the first input field present in the form that is
             // not hidden and disabled and store it in a variable.
             const firstInputElement = $("input:not(:hidden, :disabled)").first();
+	    console.log("AUTOFOCUS");
             // Focus on the first input field in the form.
             common.autofocus(firstInputElement);
         } else {
