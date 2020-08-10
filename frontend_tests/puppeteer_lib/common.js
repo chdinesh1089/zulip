@@ -139,6 +139,7 @@ class CommonUtils {
         }
         for (const name of Object.keys(params)) {
             const name_selector = `${form_selector} [name="${name}"]`;
+            await this.screenshot(page, `filling-${name}`);
             const value = params[name];
             if (typeof value === "boolean") {
                 await page.$eval(name_selector, (el, value) => {
