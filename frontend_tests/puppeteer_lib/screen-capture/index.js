@@ -22,7 +22,7 @@ async function startRecording(page) {
     await page._client.send("Emulation.clearDeviceMetricsOverride");
     await page.setBypassCSP(true);
 
-    await page.eval(() => {
+    await page.evaluate(() => {
         // The document.title set there must be in sync with
         // --auto-select-desktop-capture-source=PuppeteerRecording
         // we pass to puppeteer.lauch arg options. If the title is
