@@ -33,13 +33,4 @@ if (!window[recorderInjectedProp]) {
             }
         }
     });
-
-    window.addEventListener("load", () => {
-        // The document.title set there must be in sync with
-        // --auto-select-desktop-capture-source=PuppeteerRecording
-        // we pass to puppeteer.lauch arg options.
-        const oldTitle = document.title;
-        document.title = "PuppeteerRecording";
-        window.postMessage({type: "REC_CLIENT_PLAY", data: {oldTitle}}, "*");
-    });
 }

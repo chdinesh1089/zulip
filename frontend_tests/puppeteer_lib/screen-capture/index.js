@@ -21,7 +21,19 @@ const launchArgsOptions = [
 async function startRecording(page) {
     await page._client.send("Emulation.clearDeviceMetricsOverride");
     await page.setBypassCSP(true);
-    await page.waitForSelector("html.__PuppeteerScreenCapture_recorder_started__", {timeout: 0});
+
+    await page.eval(() => {
+        // The document.title set there must be in sync with
+        // --auto-select-desktop-capture-source=PuppeteerRecording
+        // we pass to puppeteer.lauch arg options. If the title is
+        // something else then this step will be stuck because of
+        // the permission dialog.
+        const oldTitle = document.title;
+        document.title = "PuppeteerRecording";
+        window.postMessage({type: "REC_CLIENT_PLAY", data: {oldTitle}}, "*");
+    });
+
+    await page.waitForSelector("html.__PuppeteerScreenCapture_recorder_started__");
 }
 
 async function stopRecording(page, {filename = null, directory} = {}) {
