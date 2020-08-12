@@ -19,7 +19,7 @@ const launchArgsOptions = [
 ];
 
 async function startRecording(page) {
-    await page._client.send("Emulation.clearDeviceMetricsOverride");
+    // await page._client.send("Emulation.clearDeviceMetricsOverride");
     await page.setBypassCSP(true);
 
     await page.evaluate(() => {
