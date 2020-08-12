@@ -20,7 +20,7 @@ const launchArgsOptions = [
 
 async function startRecording(page) {
     // await page._client.send("Emulation.clearDeviceMetricsOverride");
-    await page.setBypassCSP(true);
+    // await page.setBypassCSP(true);
 
     await page.evaluate(() => {
         // The document.title set there must be in sync with
