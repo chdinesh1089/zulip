@@ -198,30 +198,21 @@ jobs:
       - *save_cache_package_json
       - *save_cache_requirements
       - *save_emoji_cache
-      - *run_backend_tests
 
       - run:
-          name: test locked requirements
+          name: Run 100 puppeteer tests
           command: |
             . /srv/zulip-py3-venv/bin/activate
-            mispipe "./tools/test-locked-requirements 2>&1" ts
-
-      - *run_frontend_tests
-        # We only need to upload coverage reports on whichever platform
-        # runs the frontend tests.
-      - *upload_coverage_report
-
-      - store_artifacts:
-          path: ./var/casper/
-          destination: casper
+            for i in {0..100}; do
+              echo
+              echo -------------------
+              echo Test Run: $i
+              tools/test-js-with-puppeteer
+            done
 
       - store_artifacts:
           path: ./var/puppeteer/
           destination: puppeteer
-
-      - store_test_results:
-          path: ./var/xunit-test-results/casper/
-      - *notify_failure_status
 
   "focal-backend":
     docker:
@@ -353,21 +344,21 @@ jobs:
 
 workflows:
   version: 2
-  "Ubuntu 16.04 Xenial (Python 3.5, legacy)":
-    jobs:
-      - "xenial-legacy"
-  "Ubuntu 18.04 Bionic (Python 3.6, backend+frontend)":
+  # "Ubuntu 16.04 Xenial (Python 3.5, legacy)":
+  #   jobs:
+  #     - "xenial-legacy"
+  "Puppeteer stress tests":
     jobs:
       - "bionic-backend-frontend"
-  "Ubuntu 20.04 Focal (Python 3.8, backend)":
-    jobs:
-      - "focal-backend"
-  "Production":
-    jobs:
-      - "bionic-production-build"
-      - "bionic-production-install":
-          requires:
-            - "bionic-production-build"
-      - "focal-production-install":
-          requires:
-            - "bionic-production-build"
+  # "Ubuntu 20.04 Focal (Python 3.8, backend)":
+  #   jobs:
+  #     - "focal-backend"
+  # "Production":
+  #   jobs:
+  #     - "bionic-production-build"
+  #     - "bionic-production-install":
+  #         requires:
+  #           - "bionic-production-build"
+  #     - "focal-production-install":
+  #         requires:
+  #           - "bionic-production-build"
