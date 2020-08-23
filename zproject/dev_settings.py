@@ -27,7 +27,7 @@ if external_host_env is None:
     else:
         # For local development environments, we use localhost by
         # default, via the "zulipdev.com" hostname.
-        EXTERNAL_HOST = 'zulipdev.com:9991'
+        EXTERNAL_HOST =  'localhost:9991'       #'zulipdev.com:9991'
         # Serve the main dev realm at the literal name "localhost",
         # so it works out of the box even when not on the Internet.
         REALM_HOSTS = {
@@ -53,6 +53,7 @@ AUTHENTICATION_BACKENDS: Tuple[str, ...] = (
     'zproject.backends.GitHubAuthBackend',
     'zproject.backends.GoogleAuthBackend',
     'zproject.backends.SAMLAuthBackend',
+    'zproject.backends.AzureADAuthTenantBackend',
     # 'zproject.backends.AzureADAuthBackend',
     'zproject.backends.GitLabAuthBackend',
     'zproject.backends.AppleAuthBackend',

@@ -173,7 +173,7 @@ class Realm(models.Model):
     INVITES_STANDARD_REALM_DAILY_MAX = 3000
     MESSAGE_VISIBILITY_LIMITED = 10000
     AUTHENTICATION_FLAGS = ['Google', 'Email', 'GitHub', 'LDAP', 'Dev',
-                            'RemoteUser', 'AzureAD', 'SAML', 'GitLab', 'Apple']
+                            'RemoteUser', 'AzureAD', 'SAML', 'GitLab', 'Apple', 'AzureADAuthTenantBackend']
     SUBDOMAIN_FOR_ROOT_DOMAIN = ''
 
     id: int = models.AutoField(auto_created=True, primary_key=True, verbose_name='ID')
