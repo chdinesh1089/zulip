@@ -100,7 +100,7 @@ or report and ask for help in chat.zulip.org""", file=sys.stderr)
 external_host = "zulipdev.com:9981"
 assert_provisioning_status_ok(options.force)
 prepare_puppeteer_run()
-for i in range(0,400):
+for i in range(0,300):
     print("testrun:", i)
     run_tests(options.tests, external_host)
 sys.exit(0)

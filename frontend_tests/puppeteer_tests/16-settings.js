@@ -52,6 +52,7 @@ async function test_change_password(page) {
     const change_password_button_selector = "#change_password_button";
     await page.waitForSelector(change_password_button_selector, {visible: true});
 
+    await page.waitForSelector("#old_password", {visible: true});
     await page.type("#old_password", test_credentials.default_user.password);
     await page.type("#new_password", "new_password");
     await page.click(change_password_button_selector);
