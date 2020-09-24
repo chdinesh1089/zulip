@@ -342,7 +342,7 @@ jobs:
           name: Puppeteer Stress Test
           command: |
             . /srv/zulip-py3-venv/bin/activate
-            tools/test-js-with-puppeteer
+            tools/test-js-with-puppeteer 16
       - store_artifacts:
           path: ./var/puppeteer/
           destination: puppeteer
