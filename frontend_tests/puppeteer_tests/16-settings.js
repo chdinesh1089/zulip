@@ -329,6 +329,7 @@ async function test_notifications_section(page) {
 }
 
 async function settings_tests(page) {
+    page.on('console', (msg) => console.log("LOG:", msg.text()));
     await common.log_in(page);
     await open_settings(page);
     await test_change_full_name(page);
