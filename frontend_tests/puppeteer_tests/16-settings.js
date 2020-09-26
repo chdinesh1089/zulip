@@ -53,7 +53,9 @@ async function test_change_password(page) {
     await page.waitForSelector(change_password_button_selector, {visible: true});
 
     await page.type("#old_password", test_credentials.default_user.password);
+    await page.evaluate(() => console.log('old pass', $("#old_password").val()));
     await page.type("#new_password", "new_password");
+    await page.evaluate(() => console.log('new pass', $("#new_password").val()));
     await page.click(change_password_button_selector);
 
     // On success the change password modal gets closed.
@@ -69,6 +71,7 @@ async function test_get_api_key(page) {
     await common.fill_form(page, "#api_key_form", {
         password: test_credentials.default_user.password,
     });
+    await page.evaluate(() => console.log('api pass:', $("#get_api_key_password").val()));
     await page.click(get_api_key_button_selector);
 
     await page.waitForSelector("#show_api_key", {visible: true});
@@ -329,6 +332,7 @@ async function test_notifications_section(page) {
 }
 
 async function settings_tests(page) {
+    page.on('console', (msg) => console.log("LOG:", msg.text()));
     await common.log_in(page);
     await open_settings(page);
     await test_change_full_name(page);
