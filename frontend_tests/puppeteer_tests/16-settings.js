@@ -338,10 +338,10 @@ async function settings_tests(page) {
     await test_change_full_name(page);
     await test_get_api_key(page);
     await test_change_password(page);
-    await test_alert_words_section(page);
+    /*await test_alert_words_section(page);
     await test_your_bots_section(page);
     await test_default_language_setting(page);
-    await test_notifications_section(page);
+    await test_notifications_section(page); */
 }
 
 common.run_test(settings_tests);
