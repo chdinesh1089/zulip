@@ -53,9 +53,19 @@ async function test_change_password(page) {
     await page.waitForSelector(change_password_button_selector, {visible: true});
 
     await page.type("#old_password", test_credentials.default_user.password);
-    await page.evaluate(() => console.log('old pass', $("#old_password").val()));
+    await page.evaluate(() => {
+        console.log('old pass', $("#old_password").val())
+        const elem = $(":focus")
+        console.log("ID",elem.attr('id'));
+        console.log("Clss", elem.attr('class'));
+    });
     await page.type("#new_password", "new_password");
-    await page.evaluate(() => console.log('new pass', $("#new_password").val()));
+    await page.evaluate(() => {
+        console.log('new pass', $("#new_password").val())
+        const elem = $(":focus")
+        console.log("ID",elem.attr('id'));
+        console.log("Clss", elem.attr('class'));
+    });
     await page.click(change_password_button_selector);
 
     // On success the change password modal gets closed.
@@ -71,7 +81,12 @@ async function test_get_api_key(page) {
     await common.fill_form(page, "#api_key_form", {
         password: test_credentials.default_user.password,
     });
-    await page.evaluate(() => console.log('api pass:', $("#get_api_key_password").val()));
+    await page.evaluate(() => {
+        console.log('api pass:', $("#get_api_key_password").val())
+        const elem = $(":focus")
+        console.log("ID",elem.attr('id'));
+        console.log("Clss", elem.attr('class'));
+    });
     await page.click(get_api_key_button_selector);
 
     await page.waitForSelector("#show_api_key", {visible: true});
