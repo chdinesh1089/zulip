@@ -1888,19 +1888,26 @@ def do_send_typing_notification(
         realm: Realm,
         sender: UserProfile,
         recipient_user_profiles: List[UserProfile],
-        operator: str) -> None:
+        operator: str,
+        stream_id: Optional[int]=None,
+        topic: Optional[str]=None) -> None:
 
     sender_dict = {'user_id': sender.id, 'email': sender.email}
 
-    # Include a list of recipients in the event body to help identify where the typing is happening
-    recipient_dicts = [{'user_id': profile.id, 'email': profile.email}
-                       for profile in recipient_user_profiles]
     event = dict(
         type='typing',
         op=operator,
         sender=sender_dict,
-        recipients=recipient_dicts,
     )
+
+    if stream_id and topic:
+        event['stream_id'] = stream_id
+        event['topic'] = topic
+    else:
+        # Include a list of recipients in the event body to help identify where the typing is happening
+        recipient_dicts = [{'user_id': profile.id, 'email': profile.email}
+                           for profile in recipient_user_profiles]
+        event['recipients'] = recipient_dicts
 
     # Only deliver the notification to active user recipients
     user_ids_to_notify = [
@@ -1911,6 +1918,22 @@ def do_send_typing_notification(
 
     send_event(realm, event, user_ids_to_notify)
 
+def check_send_stream_typing_notification(sender: UserProfile, operator: str,
+                                          stream_id: int, topic: str) -> None:
+    realm = sender.realm
+    if operator not in ('start', 'stop'):
+        raise JsonableError(_('Invalid \'op\' value (should be start or stop)'))
+
+    try:
+        get_stream_by_id_in_realm(stream_id, realm)
+    except Stream.DoesNotExist:
+        raise StreamWithIDDoesNotExistError(stream_id)
+
+    stream_subscriptions = get_active_subscriptions_for_stream_id(stream_id)
+    users_subscribed = [subscription.user_profile for subscription in stream_subscriptions]
+
+    do_send_typing_notification(realm, sender, users_subscribed, operator, stream_id, topic)
+
 # check_send_typing_notification:
 # Checks the typing notification and sends it
 def check_send_typing_notification(sender: UserProfile,
@@ -1918,9 +1941,8 @@ def check_send_typing_notification(sender: UserProfile,
                                    operator: str) -> None:
 
     realm = sender.realm
-    if len(user_ids) == 0:
-        raise JsonableError(_('Missing parameter: \'to\' (recipient)'))
-    elif operator not in ('start', 'stop'):
+
+    if operator not in ('start', 'stop'):
         raise JsonableError(_('Invalid \'op\' value (should be start or stop)'))
 
     ''' The next chunk of code will go away when we upgrade old mobile

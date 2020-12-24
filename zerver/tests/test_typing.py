@@ -19,7 +19,7 @@ class TypingValidateOperatorTest(ZulipTestCase):
         result = self.api_post(sender, '/api/v1/typing', params)
         self.assert_json_error(result, 'Missing \'op\' argument')
 
-    def test_invalid_parameter(self) -> None:
+    def test_invalid_parameter_pm(self) -> None:
         """
         Sending typing notification with invalid value for op parameter fails
         """
@@ -31,14 +31,23 @@ class TypingValidateOperatorTest(ZulipTestCase):
         result = self.api_post(sender, '/api/v1/typing', params)
         self.assert_json_error(result, 'Invalid \'op\' value (should be start or stop)')
 
-class TypingValidateUsersTest(ZulipTestCase):
-    def test_empty_array(self) -> None:
+    def test_invalid_parameter_stream(self) -> None:
+        sender = self.example_user("hamlet")
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'foo', 'stream_id': 1, 'topic': 'topic'})
+        self.assert_json_error(result, 'Invalid \'op\' value (should be start or stop)')
+
+
+class TypingValidateToArgumentsTest(ZulipTestCase):
+    def test_empty_to_array(self) -> None:
         """
         Sending typing notification without recipient fails
         """
         sender = self.example_user("hamlet")
         result = self.api_post(sender, '/api/v1/typing', {'op': 'start', 'to': '[]'})
-        self.assert_json_error(result, 'Missing parameter: \'to\' (recipient)')
+        self.assert_json_error(result,
+                               "Insufficient arguments. Should have 'to' or both 'stream_id' and 'topic'.")
 
     def test_missing_recipient(self) -> None:
         """
@@ -46,7 +55,7 @@ class TypingValidateUsersTest(ZulipTestCase):
         """
         sender = self.example_user("hamlet")
         result = self.api_post(sender, '/api/v1/typing', {'op': 'start'})
-        self.assert_json_error(result, "Missing 'to' argument")
+        self.assert_json_error(result, "Insufficient arguments. Should have 'to' or both 'stream_id' and 'topic'.")
 
     def test_argument_to_is_not_valid_json(self) -> None:
         """
@@ -66,7 +75,64 @@ class TypingValidateUsersTest(ZulipTestCase):
         result = self.api_post(sender, '/api/v1/typing', {'op': 'start', 'to': invalid})
         self.assert_json_error(result, 'Invalid user ID 9999999')
 
-class TypingHappyPathTest(ZulipTestCase):
+    def test_includes_all_args(self) -> None:
+        """
+        User Cannot compose stream and private messages at once.
+        So, sending typing notification with stream, topic and to fails
+        """
+        sender = self.example_user("hamlet")
+        to = orjson.dumps([self.example_user('othello').id]).decode()
+        stream_id = self.get_stream_id('general')
+        topic = 'random is not random'
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'to': to, 'stream_id': stream_id, 'topic': topic})
+        self.assert_json_error(result, "All 'to', 'stream_id', and  'topic' at once are not accepted")
+
+    def tests_includes_only_to_and_stream_id(self) -> None:
+        sender = self.example_user("hamlet")
+        to = orjson.dumps([self.example_user('othello').id]).decode()
+        stream_id = self.get_stream_id('general')
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'to': to, 'stream_id': stream_id})
+        self.assert_json_error(result, "Bad arguments. Should have 'to' or both 'stream_id' and 'topic'.")
+
+    def tests_includes_only_to_and_topic(self) -> None:
+        sender = self.example_user("hamlet")
+        to = orjson.dumps([self.example_user('othello').id]).decode()
+        topic = 'not a random topic'
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'to': to, 'topic': topic})
+        self.assert_json_error(result, "Bad arguments. Should have 'to' or both 'stream_id' and 'topic'.")
+
+    def test_includes_stream_id_but_not_topic(self) -> None:
+        sender = self.example_user("hamlet")
+        stream_id = self.get_stream_id('general')
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'stream_id': stream_id})
+        self.assert_json_error(result, "Bad arguments. Should have 'to' or both 'stream_id' and 'topic'.")
+
+    def test_includes_topic_but_not_stream_id(self) -> None:
+        sender = self.example_user("hamlet")
+        topic = 'randomness is illusion'
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'topic': topic})
+        self.assert_json_error(result, "Bad arguments. Should have 'to' or both 'stream_id' and 'topic'.")
+
+    def test_stream_doesnt_exist(self) -> None:
+        sender = self.example_user("hamlet")
+        stream_id = self.INVALID_STREAM_ID
+        topic = 'some topic'
+
+        result = self.api_post(sender, '/api/v1/typing',
+                               {'op': 'start', 'stream_id': stream_id, 'topic': topic})
+        self.assert_json_error(result, f"Stream with ID '{stream_id}' does not exist")
+
+class TypingHappyPathTestPMs(ZulipTestCase):
     def test_start_to_single_recipient(self) -> None:
         sender = self.example_user('hamlet')
         recipient_user = self.example_user('othello')
@@ -276,3 +342,70 @@ class TypingHappyPathTest(ZulipTestCase):
         self.assertEqual(event['sender']['email'], sender.email)
         self.assertEqual(event['type'], 'typing')
         self.assertEqual(event['op'], 'stop')
+
+class TypingHappyPathTestStreams(ZulipTestCase):
+    def test_start(self) -> None:
+        sender = self.example_user('hamlet')
+        stream_name = self.get_streams(sender)[0]
+        stream_id = self.get_stream_id(stream_name)
+        topic = 'Some topic'
+
+        expected_user_ids = {
+            user_profile.id for user_profile in self.users_subscribed_to_stream(stream_name, sender.realm)
+        }
+
+        params = dict(
+            op='start',
+            stream_id=stream_id,
+            topic=topic,
+        )
+
+        events: List[Mapping[str, Any]] = []
+        with tornado_redirected_to_list(events):
+            result = self.api_post(sender, '/api/v1/typing', params, intentionally_undocumented=True)
+
+        self.assert_json_success(result)
+        self.assertEqual(len(events), 1)
+
+        event = events[0]['event']
+        event_user_ids = set(events[0]['users'])
+
+        self.assertEqual(expected_user_ids, event_user_ids)
+        self.assertEqual(sender.email, event['sender']['email'])
+        self.assertEqual(stream_id, event['stream_id'])
+        self.assertEqual(topic, event['topic'])
+        self.assertEqual('typing', event['type'])
+        self.assertEqual('start', event['op'])
+
+    def test_stop(self) -> None:
+        sender = self.example_user('hamlet')
+        stream_name = self.get_streams(sender)[0]
+        stream_id = self.get_stream_id(stream_name)
+        topic = 'Some topic'
+
+        expected_user_ids = {
+            user_profile.id for user_profile in self.users_subscribed_to_stream(stream_name, sender.realm)
+        }
+
+        params = dict(
+            op='stop',
+            stream_id=stream_id,
+            topic=topic,
+        )
+
+        events: List[Mapping[str, Any]] = []
+        with tornado_redirected_to_list(events):
+            result = self.api_post(sender, '/api/v1/typing', params, intentionally_undocumented=True)
+
+        self.assert_json_success(result)
+        self.assertEqual(len(events), 1)
+
+        event = events[0]['event']
+        event_user_ids = set(events[0]['users'])
+
+        self.assertEqual(expected_user_ids, event_user_ids)
+        self.assertEqual(sender.email, event['sender']['email'])
+        self.assertEqual(stream_id, event['stream_id'])
+        self.assertEqual(topic, event['topic'])
+        self.assertEqual('typing', event['type'])
+        self.assertEqual('stop', event['op'])
