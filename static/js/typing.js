@@ -10,18 +10,42 @@ const people = require("./people");
 //
 // See docs/subsystems/typing-indicators.md for details on typing indicators.
 
-function send_typing_notification_ajax(user_ids_array, operation) {
+function send_typing_notification_ajax(data) {
     channel.post({
         url: "/json/typing",
-        data: {
-            to: JSON.stringify(user_ids_array),
-            op: operation,
-        },
+        data,
         success() {},
         error(xhr) {
             blueslip.warn("Failed to send typing event: " + xhr.responseText);
         },
     });
+}
+
+function send_pm_typing_notification(user_ids_array, operation) {
+    const data = {
+        to: JSON.stringify(user_ids_array),
+        op: operation,
+    };
+    send_typing_notification_ajax(data);
+}
+
+function send_stream_typing_notification(stream_id, topic, operation) {
+    const data = {
+        stream_id: stream_id,
+        topic: topic,
+        op: operation,
+    };
+    send_typing_notification_ajax(data);
+}
+
+function send_typing_notification_based_on_msg_type(to, operation) {
+    const message_type = compose_state.get_message_type();
+    if (Array.isArray(to) && message_type === "private") {
+        const user_ids_array = to;
+        send_pm_typing_notification(user_ids_array, operation);
+    } else if (message_type === "stream") {
+        send_stream_typing_notification(to.stream_id, to.topic, operation);
+    }
 }
 
 function get_user_ids_array() {
@@ -46,15 +70,28 @@ function get_current_time() {
     return Date.now();
 }
 
-function notify_server_start(user_ids_array) {
-    send_typing_notification_ajax(user_ids_array, "start");
+function notify_server_start(to) {
+    send_typing_notification_based_on_msg_type(to, "start");
 }
 
-function notify_server_stop(user_ids_array) {
-    send_typing_notification_ajax(user_ids_array, "stop");
+function notify_server_stop(to) {
+    send_typing_notification_based_on_msg_type(to, "stop");
 }
 
-exports.get_recipient = get_user_ids_array;
+exports.get_recipient = function () {
+    const message_type = compose_state.get_message_type();
+    if (message_type === "private") {
+        return get_user_ids_array();
+    }
+    if (message_type === "stream") {
+        const stream_name = compose_state.stream_name();
+        const stream_id = stream_data.get_stream_id(stream_name);
+        const topic = compose_state.topic();
+        return {stream_id, topic};
+    }
+    return null;
+};
+
 exports.initialize = function () {
     const worker = {
         get_current_time,
