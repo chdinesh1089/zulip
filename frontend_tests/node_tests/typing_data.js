@@ -30,21 +30,21 @@ run_test("basics", () => {
     assert.deepEqual(typing_data.get_all_typists(), [7, 10, 15]);
 
     // test basic removal
-    assert(typing_data.remove_typist([15, 7], "7"));
+    assert(typing_data.remove_pms_typist([15, 7], "7"));
     assert.deepEqual(typing_data.get_group_typists([7, 15]), [15]);
 
     // test removing an id that is not there
-    assert(!typing_data.remove_typist([15, 7], 7));
+    assert(!typing_data.remove_pms_typist([15, 7], 7));
     assert.deepEqual(typing_data.get_group_typists([7, 15]), [15]);
     assert.deepEqual(typing_data.get_all_typists(), [10, 15]);
 
     // remove user from one group, but "15" will still be among
     // "all typists"
-    assert(typing_data.remove_typist(["15", 7], "15"));
+    assert(typing_data.remove_pms_typist(["15", 7], "15"));
     assert.deepEqual(typing_data.get_all_typists(), [10, 15]);
 
     // now remove from the other group
-    assert(typing_data.remove_typist([5, 15, 10], 15));
+    assert(typing_data.remove_pms_typist([5, 15, 10], 15));
     assert.deepEqual(typing_data.get_all_typists(), [10]);
 
     // test duplicate ids in a groups
@@ -80,12 +80,12 @@ run_test("timers", () => {
 
     function kickstart() {
         reset_events();
-        typing_data.kickstart_inbound_timer(stub_group, stub_delay, stub_f);
+        typing_data.kickstart_pms_inbound_timer(stub_group, stub_delay, stub_f);
     }
 
     function clear() {
         reset_events();
-        typing_data.clear_inbound_timer(stub_group);
+        typing_data.clear_pms_inbound_timer(stub_group);
     }
 
     set_global("setTimeout", set_timeout);

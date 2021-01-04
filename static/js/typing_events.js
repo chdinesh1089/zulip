@@ -20,8 +20,12 @@ const TYPING_STARTED_EXPIRY_PERIOD = 15000; // 15s
 // that make typing indicators work.
 
 function get_users_typing_for_narrow() {
+    if (narrow_state.narrowed_to_topic()) {
+        return typing_data.get_stream_typists(narrow_state.stream_id(), narrow_state.topic());
+    }
+
     if (!narrow_state.narrowed_to_pms()) {
-        // Narrow is neither pm-with nor is: private
+        // Narrow is neither pm-with nor is: private nor topic
         return [];
     }
 
@@ -56,31 +60,60 @@ exports.render_notifications_for_narrow = function () {
 };
 
 exports.hide_notification = function (event) {
-    const recipients = event.recipients.map((user) => user.user_id);
-    recipients.sort();
+    if (event.recipients !== undefined) {
+        const recipients = event.recipients.map((user) => user.user_id);
+        recipients.sort();
 
-    typing_data.clear_inbound_timer(recipients);
+        typing_data.clear_pms_inbound_timer(recipients);
 
-    const removed = typing_data.remove_typist(recipients, event.sender.user_id);
+        const removed = typing_data.remove_pms_typist(recipients, event.sender.user_id);
 
-    if (removed) {
-        exports.render_notifications_for_narrow();
+        if (removed) {
+            exports.render_notifications_for_narrow();
+        }
+    } else {
+        typing_data.clear_streams_inbound_timer(event.stream_id, event.topic);
+
+        const removed = typing_data.remove_streams_typist(
+            event.stream_id,
+            event.topic,
+            event.sender.user_id,
+        );
+
+        if (removed) {
+            exports.render_notifications_for_narrow();
+        }
     }
 };
 
 exports.display_notification = function (event) {
-    const recipients = event.recipients.map((user) => user.user_id);
-    recipients.sort();
-
     const sender_id = event.sender.user_id;
     event.sender.name = people.get_by_user_id(sender_id).full_name;
 
-    typing_data.add_typist(recipients, sender_id);
+    if (event.recipients !== undefined) {
+        const recipients = event.recipients.map((user) => user.user_id);
+        recipients.sort();
 
-    exports.render_notifications_for_narrow();
+        typing_data.add_pms_typist(recipients, sender_id);
 
-    typing_data.kickstart_inbound_timer(recipients, TYPING_STARTED_EXPIRY_PERIOD, () => {
-        exports.hide_notification(event);
-    });
+        exports.render_notifications_for_narrow();
+
+        typing_data.kickstart_pms_inbound_timer(recipients, TYPING_STARTED_EXPIRY_PERIOD, () => {
+            exports.hide_notification(event);
+        });
+    } else {
+        typing_data.add_streams_typist(event.stream_id, event.topic, sender_id);
+
+        exports.render_notifications_for_narrow();
+
+        typing_data.kickstart_streams_inbound_timer(
+            event.stream_id,
+            event.topic,
+            TYPING_STARTED_EXPIRY_PERIOD,
+            () => {
+                exports.hide_notifications(event);
+            },
+        );
+    }
 };
 window.typing_events = exports;
