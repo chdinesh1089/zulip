@@ -16,6 +16,10 @@ const people = require("./people");
 // and expire its typing status
 const TYPING_STARTED_EXPIRY_PERIOD = 15000; // 15s
 
+// If number of users typing exceed this,
+// we render "Several people are typing..."
+const MAX_USERS_TO_DISPLAY_NAME = 3;
+
 // Note!: There are also timing constants in typing_status.js
 // that make typing indicators work.
 
@@ -51,10 +55,16 @@ function get_users_typing_for_narrow() {
 exports.render_notifications_for_narrow = function () {
     const user_ids = get_users_typing_for_narrow();
     const users_typing = user_ids.map(people.get_by_user_id);
-    if (users_typing.length === 0) {
+    const num_of_users_typing = users_typing.length
+
+    if (num_of_users_typing === 0) {
         $("#typing_notifications").hide();
     } else {
-        $("#typing_notifications").html(render_typing_notifications({users: users_typing}));
+        if (num_of_users_typing <= MAX_USERS_TO_DISPLAY_NAME) {
+            $("#typing_notifications").html(render_typing_notifications({users: users_typing}));
+        } else {
+            $("#typing_notifications").html("<li class='typing_notification'>Several people are typing...</li>");
+        }
         $("#typing_notifications").show();
     }
 };
